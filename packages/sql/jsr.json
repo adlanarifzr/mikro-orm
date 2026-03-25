@@ -1,6 +1,6 @@
 {
-  "name": "@mikro-orm/sql",
-  "version": "7.0.5",
+  "name": "@adlanarifzr/mikro-orm-sql",
+  "version": "7.0.5-next.0",
   "exports": {
     ".": "./src/index.ts"
   },

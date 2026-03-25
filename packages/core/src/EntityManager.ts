@@ -2817,7 +2817,7 @@ export class EntityManager<Driver extends IDatabaseDriver = IDatabaseDriver> {
       return em.#loaders[type];
     }
 
-    const { DataloaderUtils } = await import('@mikro-orm/core/dataloader');
+    const { DataloaderUtils } = await import('./utils/DataloaderUtils.js');
     const DataLoader = await DataloaderUtils.getDataLoader();
 
     switch (type) {

@@ -5,12 +5,34 @@ __metadata:
   version: 8
   cacheKey: 10
 
+"@adlanarifzr/mikro-orm-core@workspace:packages/core":
+  version: 0.0.0-use.local
+  resolution: "@adlanarifzr/mikro-orm-core@workspace:packages/core"
+  peerDependencies:
+    dataloader: 2.2.3
+  peerDependenciesMeta:
+    dataloader:
+      optional: true
+  languageName: unknown
+  linkType: soft
+
 "@adlanarifzr/mikro-orm-migrations@workspace:packages/migrations":
   version: 0.0.0-use.local
   resolution: "@adlanarifzr/mikro-orm-migrations@workspace:packages/migrations"
   dependencies:
     "@mikro-orm/core": "npm:^7.0.5"
     "@mikro-orm/sql": "npm:7.0.5"
+  peerDependencies:
+    "@mikro-orm/core": 7.0.5
+  languageName: unknown
+  linkType: soft
+
+"@adlanarifzr/mikro-orm-sql@workspace:packages/sql":
+  version: 0.0.0-use.local
+  resolution: "@adlanarifzr/mikro-orm-sql@workspace:packages/sql"
+  dependencies:
+    "@mikro-orm/core": "npm:^7.0.5"
+    kysely: "npm:0.28.14"
   peerDependencies:
     "@mikro-orm/core": 7.0.5
   languageName: unknown
@@ -1194,16 +1216,17 @@ __metadata:
   languageName: unknown
   linkType: soft
 
-"@mikro-orm/core@npm:7.0.5, @mikro-orm/core@npm:^7.0.5, @mikro-orm/core@workspace:packages/core":
-  version: 0.0.0-use.local
-  resolution: "@mikro-orm/core@workspace:packages/core"
+"@mikro-orm/core@npm:7.0.5, @mikro-orm/core@npm:^7.0.5":
+  version: 7.0.5
+  resolution: "@mikro-orm/core@npm:7.0.5"
   peerDependencies:
     dataloader: 2.2.3
   peerDependenciesMeta:
     dataloader:
       optional: true
-  languageName: unknown
-  linkType: soft
+  checksum: 10/76751196dd7a0fede0dd19fcc3cc8c68f399327b223250ffe9c36c37655795256c7e4f1dde3e75c1153432463e7c73f39f8f9b2b53b05bdae667356f2cea456e
+  languageName: node
+  linkType: hard
 
 "@mikro-orm/decorators@workspace:packages/decorators":
   version: 0.0.0-use.local
@@ -1433,16 +1456,16 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@mikro-orm/sql@npm:7.0.5, @mikro-orm/sql@npm:^7.0.5, @mikro-orm/sql@workspace:packages/sql":
-  version: 0.0.0-use.local
-  resolution: "@mikro-orm/sql@workspace:packages/sql"
+"@mikro-orm/sql@npm:7.0.5, @mikro-orm/sql@npm:^7.0.5":
+  version: 7.0.5
+  resolution: "@mikro-orm/sql@npm:7.0.5"
   dependencies:
-    "@mikro-orm/core": "npm:^7.0.5"
     kysely: "npm:0.28.14"
   peerDependencies:
     "@mikro-orm/core": 7.0.5
-  languageName: unknown
-  linkType: soft
+  checksum: 10/15b83475c61a13a7e78f1c3ce943bdac5fdbcb8040b127d46880b3c42e729b1ed2de3330715b2122ef9e19c2aec1f75426ec5621101605a4367d1f5d0b0af89c
+  languageName: node
+  linkType: hard
 
 "@mikro-orm/sqlite@workspace:packages/sqlite":
   version: 0.0.0-use.local

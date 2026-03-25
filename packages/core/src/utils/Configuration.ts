@@ -123,6 +123,7 @@ const DEFAULTS = {
   schemaGenerator: {
     createForeignKeyConstraints: true,
     ignoreSchema: [],
+    onlyConfiguredSchemas: false,
     skipTables: [],
     skipViews: [],
     skipColumns: {},
@@ -1195,6 +1196,11 @@ export interface Options<
      * @default []
      */
     ignoreSchema?: string[];
+    /**
+     * Only use configured schemas when comparing schemas.
+     * @default false
+     */
+    onlyConfiguredSchemas?: boolean;
     /**
      * Table names or patterns to skip during schema generation.
      * @default []

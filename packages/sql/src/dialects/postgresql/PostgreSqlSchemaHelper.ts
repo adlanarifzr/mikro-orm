@@ -137,6 +137,11 @@ export class PostgreSqlSchemaHelper extends SchemaHelper {
   }
 
   private getIgnoredNamespacesConditionSQL(column = 'schema_name'): string {
+    // @ts-ignore - onlyConfiguredSchemas is only defined in @adlanarifzr/mikro-orm-core, not the official repo
+    if(this.platform.getConfig().get('schemaGenerator').onlyConfiguredSchemas) {
+      return `"${column}" = ${this.platform.quoteValue(this.platform.getConfig().get('schema') ?? this.platform.getDefaultSchemaName())}`;
+    }
+
     const ignored = [
       'information_schema',
       'tiger',

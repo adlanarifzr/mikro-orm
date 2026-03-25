@@ -258,7 +258,7 @@ export class MetadataDiscovery {
     }
 
     if (paths.length > 0) {
-      const { discoverEntities } = await import('@mikro-orm/core/file-discovery');
+      const { discoverEntities } = await import('./discover-entities.js');
       processed.push(...(await discoverEntities(paths, { baseDir })));
     }
 
