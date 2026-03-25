@@ -1,5 +1,5 @@
 {
-  "name": "@mikro-orm/migrations",
+  "name": "@adlanarifzr/mikro-orm-migrations",
   "version": "7.0.5",
   "exports": {
     ".": "./src/index.ts"

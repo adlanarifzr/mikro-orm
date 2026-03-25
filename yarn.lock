@@ -5,6 +5,17 @@ __metadata:
   version: 8
   cacheKey: 10
 
+"@adlanarifzr/mikro-orm-migrations@workspace:packages/migrations":
+  version: 0.0.0-use.local
+  resolution: "@adlanarifzr/mikro-orm-migrations@workspace:packages/migrations"
+  dependencies:
+    "@mikro-orm/core": "npm:^7.0.5"
+    "@mikro-orm/sql": "npm:7.0.5"
+  peerDependencies:
+    "@mikro-orm/core": 7.0.5
+  languageName: unknown
+  linkType: soft
+
 "@ark/attest@npm:0.56.0":
   version: 0.56.0
   resolution: "@ark/attest@npm:0.56.0"
@@ -1262,17 +1273,6 @@ __metadata:
     "@mikro-orm/core": "npm:^7.0.5"
     "@mikro-orm/mongodb": "npm:7.0.5"
     mongodb: "npm:7.1.1"
-  peerDependencies:
-    "@mikro-orm/core": 7.0.5
-  languageName: unknown
-  linkType: soft
-
-"@mikro-orm/migrations@workspace:packages/migrations":
-  version: 0.0.0-use.local
-  resolution: "@mikro-orm/migrations@workspace:packages/migrations"
-  dependencies:
-    "@mikro-orm/core": "npm:^7.0.5"
-    "@mikro-orm/sql": "npm:7.0.5"
   peerDependencies:
     "@mikro-orm/core": 7.0.5
   languageName: unknown
