@@ -144,15 +144,15 @@ export class Migrator extends AbstractMigrator<AbstractSqlDriver> {
   ): Promise<MigrationInfo[]> {
     const result = await super.runMigrations(method, options);
 
-    if (result.length > 0 && this.options.snapshot) {
-      const schema = await DatabaseSchema.create(this.em.getConnection(), this.em.getPlatform(), this.config);
+    // if (result.length > 0 && this.options.snapshot) {
+    //   const schema = await DatabaseSchema.create(this.em.getConnection(), this.em.getPlatform(), this.config);
 
-      try {
-        await this.storeCurrentSchema(schema);
-      } catch {
-        // Silently ignore for read-only filesystems (production).
-      }
-    }
+    //   try {
+    //     await this.storeCurrentSchema(schema);
+    //   } catch {
+    //     // Silently ignore for read-only filesystems (production).
+    //   }
+    // }
 
     return result;
   }
