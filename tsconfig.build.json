@@ -12,6 +12,9 @@
     "forceConsistentCasingInFileNames": true,
     "noImplicitOverride": true,
     "noImplicitReturns": true,
+    "types": [
+      "node"
+    ],
   },
   "exclude": [
     "**/node_modules",

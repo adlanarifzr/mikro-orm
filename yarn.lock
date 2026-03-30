@@ -20,10 +20,10 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "@adlanarifzr/mikro-orm-migrations@workspace:packages/migrations"
   dependencies:
-    "@mikro-orm/core": "npm:^7.0.5"
-    "@mikro-orm/sql": "npm:7.0.5"
+    "@mikro-orm/core": "npm:^7.0.6"
+    "@mikro-orm/sql": "npm:7.0.6"
   peerDependencies:
-    "@mikro-orm/core": 7.0.5
+    "@mikro-orm/core": 7.0.6
   languageName: unknown
   linkType: soft
 
@@ -31,10 +31,10 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "@adlanarifzr/mikro-orm-sql@workspace:packages/sql"
   dependencies:
-    "@mikro-orm/core": "npm:^7.0.5"
+    "@mikro-orm/core": "npm:^7.0.6"
     kysely: "npm:0.28.14"
   peerDependencies:
-    "@mikro-orm/core": 7.0.5
+    "@mikro-orm/core": 7.0.6
   languageName: unknown
   linkType: soft
 
@@ -1141,65 +1141,65 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@libsql/darwin-arm64@npm:0.5.28":
-  version: 0.5.28
-  resolution: "@libsql/darwin-arm64@npm:0.5.28"
+"@libsql/darwin-arm64@npm:0.5.29":
+  version: 0.5.29
+  resolution: "@libsql/darwin-arm64@npm:0.5.29"
   conditions: os=darwin & cpu=arm64
   languageName: node
   linkType: hard
 
-"@libsql/darwin-x64@npm:0.5.28":
-  version: 0.5.28
-  resolution: "@libsql/darwin-x64@npm:0.5.28"
+"@libsql/darwin-x64@npm:0.5.29":
+  version: 0.5.29
+  resolution: "@libsql/darwin-x64@npm:0.5.29"
   conditions: os=darwin & cpu=x64
   languageName: node
   linkType: hard
 
-"@libsql/linux-arm-gnueabihf@npm:0.5.28":
-  version: 0.5.28
-  resolution: "@libsql/linux-arm-gnueabihf@npm:0.5.28"
+"@libsql/linux-arm-gnueabihf@npm:0.5.29":
+  version: 0.5.29
+  resolution: "@libsql/linux-arm-gnueabihf@npm:0.5.29"
   conditions: os=linux & cpu=arm
   languageName: node
   linkType: hard
 
-"@libsql/linux-arm-musleabihf@npm:0.5.28":
-  version: 0.5.28
-  resolution: "@libsql/linux-arm-musleabihf@npm:0.5.28"
+"@libsql/linux-arm-musleabihf@npm:0.5.29":
+  version: 0.5.29
+  resolution: "@libsql/linux-arm-musleabihf@npm:0.5.29"
   conditions: os=linux & cpu=arm
   languageName: node
   linkType: hard
 
-"@libsql/linux-arm64-gnu@npm:0.5.28":
-  version: 0.5.28
-  resolution: "@libsql/linux-arm64-gnu@npm:0.5.28"
+"@libsql/linux-arm64-gnu@npm:0.5.29":
+  version: 0.5.29
+  resolution: "@libsql/linux-arm64-gnu@npm:0.5.29"
   conditions: os=linux & cpu=arm64
   languageName: node
   linkType: hard
 
-"@libsql/linux-arm64-musl@npm:0.5.28":
-  version: 0.5.28
-  resolution: "@libsql/linux-arm64-musl@npm:0.5.28"
+"@libsql/linux-arm64-musl@npm:0.5.29":
+  version: 0.5.29
+  resolution: "@libsql/linux-arm64-musl@npm:0.5.29"
   conditions: os=linux & cpu=arm64
   languageName: node
   linkType: hard
 
-"@libsql/linux-x64-gnu@npm:0.5.28":
-  version: 0.5.28
-  resolution: "@libsql/linux-x64-gnu@npm:0.5.28"
+"@libsql/linux-x64-gnu@npm:0.5.29":
+  version: 0.5.29
+  resolution: "@libsql/linux-x64-gnu@npm:0.5.29"
   conditions: os=linux & cpu=x64
   languageName: node
   linkType: hard
 
-"@libsql/linux-x64-musl@npm:0.5.28":
-  version: 0.5.28
-  resolution: "@libsql/linux-x64-musl@npm:0.5.28"
+"@libsql/linux-x64-musl@npm:0.5.29":
+  version: 0.5.29
+  resolution: "@libsql/linux-x64-musl@npm:0.5.29"
   conditions: os=linux & cpu=x64
   languageName: node
   linkType: hard
 
-"@libsql/win32-x64-msvc@npm:0.5.28":
-  version: 0.5.28
-  resolution: "@libsql/win32-x64-msvc@npm:0.5.28"
+"@libsql/win32-x64-msvc@npm:0.5.29":
+  version: 0.5.29
+  resolution: "@libsql/win32-x64-msvc@npm:0.5.29"
   conditions: os=win32 & cpu=x64
   languageName: node
   linkType: hard
@@ -1208,23 +1208,23 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "@mikro-orm/cli@workspace:packages/cli"
   dependencies:
-    "@mikro-orm/core": "npm:7.0.5"
-    mikro-orm: "npm:7.0.5"
+    "@mikro-orm/core": "npm:7.0.6"
+    mikro-orm: "npm:7.0.6"
     yargs: "npm:17.7.2"
   bin:
     mikro-orm: ./dist/cli.js
   languageName: unknown
   linkType: soft
 
-"@mikro-orm/core@npm:7.0.5, @mikro-orm/core@npm:^7.0.5":
-  version: 7.0.5
-  resolution: "@mikro-orm/core@npm:7.0.5"
+"@mikro-orm/core@npm:7.0.6, @mikro-orm/core@npm:^7.0.6":
+  version: 7.0.6
+  resolution: "@mikro-orm/core@npm:7.0.6"
   peerDependencies:
     dataloader: 2.2.3
   peerDependenciesMeta:
     dataloader:
       optional: true
-  checksum: 10/76751196dd7a0fede0dd19fcc3cc8c68f399327b223250ffe9c36c37655795256c7e4f1dde3e75c1153432463e7c73f39f8f9b2b53b05bdae667356f2cea456e
+  checksum: 10/cb4556a4cbdb91e59e3391437deeeb51c2c5e56bb5e6b3eeb34e99ef47370410297e27a017ca6865099a8a6e3569003f2558fb7732387ec4a9b37b3520ecd860
   languageName: node
   linkType: hard
 
@@ -1232,9 +1232,9 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "@mikro-orm/decorators@workspace:packages/decorators"
   dependencies:
-    "@mikro-orm/core": "npm:^7.0.5"
+    "@mikro-orm/core": "npm:^7.0.6"
   peerDependencies:
-    "@mikro-orm/core": 7.0.5
+    "@mikro-orm/core": 7.0.6
     reflect-metadata: ^0.1.0 || ^0.2.0
   peerDependenciesMeta:
     reflect-metadata:
@@ -1246,10 +1246,10 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "@mikro-orm/entity-generator@workspace:packages/entity-generator"
   dependencies:
-    "@mikro-orm/core": "npm:^7.0.5"
-    "@mikro-orm/sql": "npm:7.0.5"
+    "@mikro-orm/core": "npm:^7.0.6"
+    "@mikro-orm/sql": "npm:7.0.6"
   peerDependencies:
-    "@mikro-orm/core": 7.0.5
+    "@mikro-orm/core": 7.0.6
   languageName: unknown
   linkType: soft
 
@@ -1257,9 +1257,9 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "@mikro-orm/knex-compat@workspace:packages/knex-compat"
   dependencies:
-    "@mikro-orm/sql": "npm:^7.0.5"
+    "@mikro-orm/sql": "npm:^7.0.6"
   peerDependencies:
-    "@mikro-orm/sql": 7.0.5
+    "@mikro-orm/sql": 7.0.6
     knex: ^3.0.0
   languageName: unknown
   linkType: soft
@@ -1268,12 +1268,12 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "@mikro-orm/libsql@workspace:packages/libsql"
   dependencies:
-    "@mikro-orm/core": "npm:^7.0.5"
-    "@mikro-orm/sql": "npm:7.0.5"
+    "@mikro-orm/core": "npm:^7.0.6"
+    "@mikro-orm/sql": "npm:7.0.6"
     kysely: "npm:0.28.14"
-    libsql: "npm:0.5.28"
+    libsql: "npm:0.5.29"
   peerDependencies:
-    "@mikro-orm/core": 7.0.5
+    "@mikro-orm/core": 7.0.6
   languageName: unknown
   linkType: soft
 
@@ -1281,11 +1281,11 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "@mikro-orm/mariadb@workspace:packages/mariadb"
   dependencies:
-    "@mikro-orm/core": "npm:^7.0.5"
-    "@mikro-orm/mysql": "npm:7.0.5"
+    "@mikro-orm/core": "npm:^7.0.6"
+    "@mikro-orm/mysql": "npm:7.0.6"
     kysely: "npm:0.28.14"
   peerDependencies:
-    "@mikro-orm/core": 7.0.5
+    "@mikro-orm/core": 7.0.6
   languageName: unknown
   linkType: soft
 
@@ -1293,11 +1293,11 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "@mikro-orm/migrations-mongodb@workspace:packages/migrations-mongodb"
   dependencies:
-    "@mikro-orm/core": "npm:^7.0.5"
-    "@mikro-orm/mongodb": "npm:7.0.5"
+    "@mikro-orm/core": "npm:^7.0.6"
+    "@mikro-orm/mongodb": "npm:7.0.6"
     mongodb: "npm:7.1.1"
   peerDependencies:
-    "@mikro-orm/core": 7.0.5
+    "@mikro-orm/core": 7.0.6
   languageName: unknown
   linkType: soft
 
@@ -1310,14 +1310,14 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@mikro-orm/mongodb@npm:7.0.5, @mikro-orm/mongodb@workspace:packages/mongodb":
+"@mikro-orm/mongodb@npm:7.0.6, @mikro-orm/mongodb@workspace:packages/mongodb":
   version: 0.0.0-use.local
   resolution: "@mikro-orm/mongodb@workspace:packages/mongodb"
   dependencies:
-    "@mikro-orm/core": "npm:^7.0.5"
+    "@mikro-orm/core": "npm:^7.0.6"
     mongodb: "npm:7.1.1"
   peerDependencies:
-    "@mikro-orm/core": 7.0.5
+    "@mikro-orm/core": 7.0.6
   languageName: unknown
   linkType: soft
 
@@ -1325,28 +1325,28 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "@mikro-orm/mssql@workspace:packages/mssql"
   dependencies:
-    "@mikro-orm/core": "npm:^7.0.5"
-    "@mikro-orm/sql": "npm:7.0.5"
+    "@mikro-orm/core": "npm:^7.0.6"
+    "@mikro-orm/sql": "npm:7.0.6"
     kysely: "npm:0.28.14"
     tarn: "npm:3.0.2"
     tedious: "npm:19.2.1"
     tsqlstring: "npm:1.0.1"
   peerDependencies:
-    "@mikro-orm/core": 7.0.5
+    "@mikro-orm/core": 7.0.6
   languageName: unknown
   linkType: soft
 
-"@mikro-orm/mysql@npm:7.0.5, @mikro-orm/mysql@workspace:packages/mysql":
+"@mikro-orm/mysql@npm:7.0.6, @mikro-orm/mysql@workspace:packages/mysql":
   version: 0.0.0-use.local
   resolution: "@mikro-orm/mysql@workspace:packages/mysql"
   dependencies:
-    "@mikro-orm/core": "npm:^7.0.5"
-    "@mikro-orm/sql": "npm:7.0.5"
+    "@mikro-orm/core": "npm:^7.0.6"
+    "@mikro-orm/sql": "npm:7.0.6"
     kysely: "npm:0.28.14"
     mysql2: "npm:3.20.0"
     sqlstring: "npm:2.3.3"
   peerDependencies:
-    "@mikro-orm/core": 7.0.5
+    "@mikro-orm/core": 7.0.6
   languageName: unknown
   linkType: soft
 
@@ -1354,12 +1354,12 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "@mikro-orm/oracledb@workspace:packages/oracledb"
   dependencies:
-    "@mikro-orm/core": "npm:^7.0.5"
-    "@mikro-orm/sql": "npm:7.0.5"
+    "@mikro-orm/core": "npm:^7.0.6"
+    "@mikro-orm/sql": "npm:7.0.6"
     kysely: "npm:0.28.14"
     oracledb: "npm:6.10.0"
   peerDependencies:
-    "@mikro-orm/core": 7.0.5
+    "@mikro-orm/core": 7.0.6
   languageName: unknown
   linkType: soft
 
@@ -1367,8 +1367,8 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "@mikro-orm/postgresql@workspace:packages/postgresql"
   dependencies:
-    "@mikro-orm/core": "npm:^7.0.5"
-    "@mikro-orm/sql": "npm:7.0.5"
+    "@mikro-orm/core": "npm:^7.0.6"
+    "@mikro-orm/sql": "npm:7.0.6"
     kysely: "npm:0.28.14"
     pg: "npm:8.20.0"
     pg-cursor: "npm:2.19.0"
@@ -1376,7 +1376,7 @@ __metadata:
     postgres-date: "npm:2.1.0"
     postgres-interval: "npm:4.0.2"
   peerDependencies:
-    "@mikro-orm/core": 7.0.5
+    "@mikro-orm/core": 7.0.6
   languageName: unknown
   linkType: soft
 
@@ -1384,10 +1384,10 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "@mikro-orm/reflection@workspace:packages/reflection"
   dependencies:
-    "@mikro-orm/core": "npm:^7.0.5"
+    "@mikro-orm/core": "npm:^7.0.6"
     ts-morph: "npm:27.0.2"
   peerDependencies:
-    "@mikro-orm/core": 7.0.5
+    "@mikro-orm/core": 7.0.6
   languageName: unknown
   linkType: soft
 
@@ -1412,28 +1412,28 @@ __metadata:
     "@types/sqlstring": "npm:2.3.2"
     "@types/uuid": "npm:11.0.0"
     "@types/yargs": "npm:17.0.35"
-    "@vitest/coverage-v8": "npm:4.1.1"
+    "@vitest/coverage-v8": "npm:4.1.2"
     bson: "npm:7.2.0"
     conditional-type-checks: "npm:1.0.6"
     dataloader: "npm:2.2.3"
     husky: "npm:9.1.7"
     jiti: "npm:2.6.1"
     jsr: "npm:0.14.3"
-    knex: "npm:3.2.5"
+    knex: "npm:3.2.7"
     lerna: "npm:9.0.7"
     lint-staged: "npm:16.4.0"
     mongodb-memory-server-core: "npm:11.0.1"
     oxfmt: "npm:0.42.0"
     oxlint: "npm:1.57.0"
-    oxlint-tsgolint: "npm:^0.17.0"
+    oxlint-tsgolint: "npm:^0.18.0"
     reflect-metadata: "npm:0.2.2"
     rimraf: "npm:6.1.3"
     tsimp: "npm:2.0.12"
     tsx: "npm:4.21.0"
-    typescript: "npm:5.9.3"
+    typescript: "npm:6.0.2"
     unplugin-swc: "npm:1.5.9"
     uuid: "npm:11.1.0"
-    vitest: "npm:4.1.1"
+    vitest: "npm:4.1.2"
   languageName: unknown
   linkType: soft
 
@@ -1441,9 +1441,9 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "@mikro-orm/seeder@workspace:packages/seeder"
   dependencies:
-    "@mikro-orm/core": "npm:^7.0.5"
+    "@mikro-orm/core": "npm:^7.0.6"
   peerDependencies:
-    "@mikro-orm/core": 7.0.5
+    "@mikro-orm/core": 7.0.6
   languageName: unknown
   linkType: soft
 
@@ -1456,14 +1456,14 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@mikro-orm/sql@npm:7.0.5, @mikro-orm/sql@npm:^7.0.5":
-  version: 7.0.5
-  resolution: "@mikro-orm/sql@npm:7.0.5"
+"@mikro-orm/sql@npm:7.0.6, @mikro-orm/sql@npm:^7.0.6":
+  version: 7.0.6
+  resolution: "@mikro-orm/sql@npm:7.0.6"
   dependencies:
     kysely: "npm:0.28.14"
   peerDependencies:
-    "@mikro-orm/core": 7.0.5
-  checksum: 10/15b83475c61a13a7e78f1c3ce943bdac5fdbcb8040b127d46880b3c42e729b1ed2de3330715b2122ef9e19c2aec1f75426ec5621101605a4367d1f5d0b0af89c
+    "@mikro-orm/core": 7.0.6
+  checksum: 10/60c08f68f66c928b31f6006402ef1982f422bf94167a436c7bec6f9654e21b7b32e8403046306d03ee7e22244b3506b790496478efddbb0bce5c29a80770c2c0
   languageName: node
   linkType: hard
 
@@ -1471,12 +1471,12 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "@mikro-orm/sqlite@workspace:packages/sqlite"
   dependencies:
-    "@mikro-orm/core": "npm:^7.0.5"
-    "@mikro-orm/sql": "npm:7.0.5"
+    "@mikro-orm/core": "npm:^7.0.6"
+    "@mikro-orm/sql": "npm:7.0.6"
     better-sqlite3: "npm:12.8.0"
     kysely: "npm:0.28.14"
   peerDependencies:
-    "@mikro-orm/core": 7.0.5
+    "@mikro-orm/core": 7.0.6
   languageName: unknown
   linkType: soft
 
@@ -2280,44 +2280,44 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@oxlint-tsgolint/darwin-arm64@npm:0.17.0":
-  version: 0.17.0
-  resolution: "@oxlint-tsgolint/darwin-arm64@npm:0.17.0"
+"@oxlint-tsgolint/darwin-arm64@npm:0.18.1":
+  version: 0.18.1
+  resolution: "@oxlint-tsgolint/darwin-arm64@npm:0.18.1"
   conditions: os=darwin & cpu=arm64
   languageName: node
   linkType: hard
 
-"@oxlint-tsgolint/darwin-x64@npm:0.17.0":
-  version: 0.17.0
-  resolution: "@oxlint-tsgolint/darwin-x64@npm:0.17.0"
+"@oxlint-tsgolint/darwin-x64@npm:0.18.1":
+  version: 0.18.1
+  resolution: "@oxlint-tsgolint/darwin-x64@npm:0.18.1"
   conditions: os=darwin & cpu=x64
   languageName: node
   linkType: hard
 
-"@oxlint-tsgolint/linux-arm64@npm:0.17.0":
-  version: 0.17.0
-  resolution: "@oxlint-tsgolint/linux-arm64@npm:0.17.0"
+"@oxlint-tsgolint/linux-arm64@npm:0.18.1":
+  version: 0.18.1
+  resolution: "@oxlint-tsgolint/linux-arm64@npm:0.18.1"
   conditions: os=linux & cpu=arm64
   languageName: node
   linkType: hard
 
-"@oxlint-tsgolint/linux-x64@npm:0.17.0":
-  version: 0.17.0
-  resolution: "@oxlint-tsgolint/linux-x64@npm:0.17.0"
+"@oxlint-tsgolint/linux-x64@npm:0.18.1":
+  version: 0.18.1
+  resolution: "@oxlint-tsgolint/linux-x64@npm:0.18.1"
   conditions: os=linux & cpu=x64
   languageName: node
   linkType: hard
 
-"@oxlint-tsgolint/win32-arm64@npm:0.17.0":
-  version: 0.17.0
-  resolution: "@oxlint-tsgolint/win32-arm64@npm:0.17.0"
+"@oxlint-tsgolint/win32-arm64@npm:0.18.1":
+  version: 0.18.1
+  resolution: "@oxlint-tsgolint/win32-arm64@npm:0.18.1"
   conditions: os=win32 & cpu=arm64
   languageName: node
   linkType: hard
 
-"@oxlint-tsgolint/win32-x64@npm:0.17.0":
-  version: 0.17.0
-  resolution: "@oxlint-tsgolint/win32-x64@npm:0.17.0"
+"@oxlint-tsgolint/win32-x64@npm:0.18.1":
+  version: 0.18.1
+  resolution: "@oxlint-tsgolint/win32-x64@npm:0.18.1"
   conditions: os=win32 & cpu=x64
   languageName: node
   linkType: hard
@@ -3146,12 +3146,12 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@vitest/coverage-v8@npm:4.1.1":
-  version: 4.1.1
-  resolution: "@vitest/coverage-v8@npm:4.1.1"
+"@vitest/coverage-v8@npm:4.1.2":
+  version: 4.1.2
+  resolution: "@vitest/coverage-v8@npm:4.1.2"
   dependencies:
     "@bcoe/v8-coverage": "npm:^1.0.2"
-    "@vitest/utils": "npm:4.1.1"
+    "@vitest/utils": "npm:4.1.2"
     ast-v8-to-istanbul: "npm:^1.0.0"
     istanbul-lib-coverage: "npm:^3.2.2"
     istanbul-lib-report: "npm:^3.0.1"
@@ -3159,36 +3159,36 @@ __metadata:
     magicast: "npm:^0.5.2"
     obug: "npm:^2.1.1"
     std-env: "npm:^4.0.0-rc.1"
-    tinyrainbow: "npm:^3.0.3"
+    tinyrainbow: "npm:^3.1.0"
   peerDependencies:
-    "@vitest/browser": 4.1.1
-    vitest: 4.1.1
+    "@vitest/browser": 4.1.2
+    vitest: 4.1.2
   peerDependenciesMeta:
     "@vitest/browser":
       optional: true
-  checksum: 10/e5873ac0a40fa34772a68f448910cc1d77c97f2c8d1701adcb1d33411d443aa652b851aacbfc99175c3de136fa038eb83f6321321e1dc371999f3dc96999dd69
+  checksum: 10/2a38252da937894dfd47a20839714cd49deb8ea0b8289fe25ba17b6677b99dc9b695e4c689b1d6532f19e0d1b81dbac2cf555f82a0ae75abf490dd4107407206
   languageName: node
   linkType: hard
 
-"@vitest/expect@npm:4.1.1":
-  version: 4.1.1
-  resolution: "@vitest/expect@npm:4.1.1"
+"@vitest/expect@npm:4.1.2":
+  version: 4.1.2
+  resolution: "@vitest/expect@npm:4.1.2"
   dependencies:
     "@standard-schema/spec": "npm:^1.1.0"
     "@types/chai": "npm:^5.2.2"
-    "@vitest/spy": "npm:4.1.1"
-    "@vitest/utils": "npm:4.1.1"
+    "@vitest/spy": "npm:4.1.2"
+    "@vitest/utils": "npm:4.1.2"
     chai: "npm:^6.2.2"
-    tinyrainbow: "npm:^3.0.3"
-  checksum: 10/eb74aee01c3c1be58aeb829be6b112600ff34703f2c247ad993db10375d9af87d03c294c485fa6f56754b8af130cc600b397eca081c29d1a2a36b8286e3d0fbd
+    tinyrainbow: "npm:^3.1.0"
+  checksum: 10/536c5a8903927e324bbb66967be4e0ec2ec4ff6234f0b8fe20987841b0705c931c7e3ce2e61c7665f4ded65ba736de6cda8d2d37ee114efeedb187ca5d597ea1
   languageName: node
   linkType: hard
 
-"@vitest/mocker@npm:4.1.1":
-  version: 4.1.1
-  resolution: "@vitest/mocker@npm:4.1.1"
+"@vitest/mocker@npm:4.1.2":
+  version: 4.1.2
+  resolution: "@vitest/mocker@npm:4.1.2"
   dependencies:
-    "@vitest/spy": "npm:4.1.1"
+    "@vitest/spy": "npm:4.1.2"
     estree-walker: "npm:^3.0.3"
     magic-string: "npm:^0.30.21"
   peerDependencies:
@@ -3199,56 +3199,56 @@ __metadata:
       optional: true
     vite:
       optional: true
-  checksum: 10/76a50f0af8d5e8ffaa29a944be6ac7acade9fd48d9ddd766a0a27ccbeeb80e256845be7f99c383fe235a9edf66d6801ae698505b577060068f181ec25f3e156a
+  checksum: 10/1d7976e19ef168357aba2ca41cd8db86236a98dfb2209bd3152a3a20e9a5b8cbfd8f73356c43a934b384d3b4c7a63835fb1037d3f56a7824faa838331eaa214e
   languageName: node
   linkType: hard
 
-"@vitest/pretty-format@npm:4.1.1":
-  version: 4.1.1
-  resolution: "@vitest/pretty-format@npm:4.1.1"
+"@vitest/pretty-format@npm:4.1.2":
+  version: 4.1.2
+  resolution: "@vitest/pretty-format@npm:4.1.2"
   dependencies:
-    tinyrainbow: "npm:^3.0.3"
-  checksum: 10/89c260f8361ce11345677ff5f1b99549ad4bde9a38b329885cb20815461b41c7ea6425e4822a7ecdf4ead536cc0dc8757f3a8387f5e9982c741cbb3c8b3eb0cb
+    tinyrainbow: "npm:^3.1.0"
+  checksum: 10/a07a6023c52b25be5c75fc05bb3317629390cc1b50eae6cbea91ba4c13193ec88e54abaa56b46b40ddb8a6a4558d667f2ba0e1cf2ee2d0e32b463244f3002aa7
   languageName: node
   linkType: hard
 
-"@vitest/runner@npm:4.1.1":
-  version: 4.1.1
-  resolution: "@vitest/runner@npm:4.1.1"
+"@vitest/runner@npm:4.1.2":
+  version: 4.1.2
+  resolution: "@vitest/runner@npm:4.1.2"
   dependencies:
-    "@vitest/utils": "npm:4.1.1"
+    "@vitest/utils": "npm:4.1.2"
     pathe: "npm:^2.0.3"
-  checksum: 10/65a4374a4385d2ffccf98110ba7a7521cf9e90ec68b93901f1d5b07f5b574a17fb26e8631d548f703ddaf4ded09b91dc05e4415a986d6e87556689385337c5e7
+  checksum: 10/13fd019a63ee3225420474cbd1ca0ae7c5c2dcdd241f2a958ca45731c10de36131f15303ae8ab1196133ec4e955b7c6de658c7b5e19736d550f310c8195fa9b2
   languageName: node
   linkType: hard
 
-"@vitest/snapshot@npm:4.1.1":
-  version: 4.1.1
-  resolution: "@vitest/snapshot@npm:4.1.1"
+"@vitest/snapshot@npm:4.1.2":
+  version: 4.1.2
+  resolution: "@vitest/snapshot@npm:4.1.2"
   dependencies:
-    "@vitest/pretty-format": "npm:4.1.1"
-    "@vitest/utils": "npm:4.1.1"
+    "@vitest/pretty-format": "npm:4.1.2"
+    "@vitest/utils": "npm:4.1.2"
     magic-string: "npm:^0.30.21"
     pathe: "npm:^2.0.3"
-  checksum: 10/2f347abfeedb4c2aacad8b0db472842383c5369ed972b65634f327d31c91adc96055426b0dbedcc3275392a57561cffc28d76c526044368fabd1f9ca28e25572
+  checksum: 10/9d124412dbe44db43ca5277180bf5fe5dad7373218a177830bba631b53d225f7d4de368a20d6f5740ec07402e9e4dd179609db2b2f691d2d8b02f1bdbfd8c1a3
   languageName: node
   linkType: hard
 
-"@vitest/spy@npm:4.1.1":
-  version: 4.1.1
-  resolution: "@vitest/spy@npm:4.1.1"
-  checksum: 10/50dbb99bc4f49b8779dbbe258c3665aa123720560942ec0db18e983abdea9094c54ce137f627eeddc66460f9c6631df273dbf56109d813eca74a85c2188a4548
+"@vitest/spy@npm:4.1.2":
+  version: 4.1.2
+  resolution: "@vitest/spy@npm:4.1.2"
+  checksum: 10/e20e417ac430fee34e4be58802b2eb31e1c1163296a8921c0878be14e1ae77c7a7cae1b9b515d56fe623e05ee21b092aff7eb5e0d412f656650b72ecd02bb30a
   languageName: node
   linkType: hard
 
-"@vitest/utils@npm:4.1.1":
-  version: 4.1.1
-  resolution: "@vitest/utils@npm:4.1.1"
+"@vitest/utils@npm:4.1.2":
+  version: 4.1.2
+  resolution: "@vitest/utils@npm:4.1.2"
   dependencies:
-    "@vitest/pretty-format": "npm:4.1.1"
+    "@vitest/pretty-format": "npm:4.1.2"
     convert-source-map: "npm:^2.0.0"
-    tinyrainbow: "npm:^3.0.3"
-  checksum: 10/11757c339d2942c43ea8bc105a02fda82696cfd78ad70078d4f0784a8699ff8fb811415a73b955291c71fe2b50a822951b42ebcbb2ccc5180fc5757b2eb598a8
+    tinyrainbow: "npm:^3.1.0"
+  checksum: 10/854decf0eb639758d012c9aa53c3d7aed547e37c05ece6704d5f53035be77f704a24973ed95089926e1768c0b55902d42c4438660788e7a0f0e80d0fda1c713b
   languageName: node
   linkType: hard
 
@@ -6177,9 +6177,9 @@ __metadata:
   languageName: node
   linkType: hard
 
-"knex@npm:3.2.5":
-  version: 3.2.5
-  resolution: "knex@npm:3.2.5"
+"knex@npm:3.2.7":
+  version: 3.2.7
+  resolution: "knex@npm:3.2.7"
   dependencies:
     colorette: "npm:2.0.19"
     commander: "npm:^10.0.0"
@@ -6216,7 +6216,7 @@ __metadata:
       optional: true
   bin:
     knex: bin/cli.js
-  checksum: 10/278ef636822db47453068119bec63e24f747c24a1b44683c759c5f5f6a87ae546f9e33138d503bb863979527e1bcddee345933e7cab226ba43f8911af07201e4
+  checksum: 10/8943ddcbdb24275e6191eef8f9787718ac7728e39b5b4a732a7f4a81dc7ac881a95b00c18e7a39b6496f1a6b0108dd70c08f487b66c174940f3b02993af58d8a
   languageName: node
   linkType: hard
 
@@ -6329,19 +6329,19 @@ __metadata:
   languageName: node
   linkType: hard
 
-"libsql@npm:0.5.28":
-  version: 0.5.28
-  resolution: "libsql@npm:0.5.28"
+"libsql@npm:0.5.29":
+  version: 0.5.29
+  resolution: "libsql@npm:0.5.29"
   dependencies:
-    "@libsql/darwin-arm64": "npm:0.5.28"
-    "@libsql/darwin-x64": "npm:0.5.28"
-    "@libsql/linux-arm-gnueabihf": "npm:0.5.28"
-    "@libsql/linux-arm-musleabihf": "npm:0.5.28"
-    "@libsql/linux-arm64-gnu": "npm:0.5.28"
-    "@libsql/linux-arm64-musl": "npm:0.5.28"
-    "@libsql/linux-x64-gnu": "npm:0.5.28"
-    "@libsql/linux-x64-musl": "npm:0.5.28"
-    "@libsql/win32-x64-msvc": "npm:0.5.28"
+    "@libsql/darwin-arm64": "npm:0.5.29"
+    "@libsql/darwin-x64": "npm:0.5.29"
+    "@libsql/linux-arm-gnueabihf": "npm:0.5.29"
+    "@libsql/linux-arm-musleabihf": "npm:0.5.29"
+    "@libsql/linux-arm64-gnu": "npm:0.5.29"
+    "@libsql/linux-arm64-musl": "npm:0.5.29"
+    "@libsql/linux-x64-gnu": "npm:0.5.29"
+    "@libsql/linux-x64-musl": "npm:0.5.29"
+    "@libsql/win32-x64-msvc": "npm:0.5.29"
     "@neon-rs/load": "npm:^0.0.4"
     detect-libc: "npm:2.0.2"
   dependenciesMeta:
@@ -6363,7 +6363,7 @@ __metadata:
       optional: true
     "@libsql/win32-x64-msvc":
       optional: true
-  checksum: 10/b23cee1e2572c2c67ad533fe5a9d27d3d82709b5111733f2ac175f5635fb11142c3bb2be9576cdbb93197e37f8cd1163a1246a0d0c5a61aa6efcb62f2df0662f
+  checksum: 10/ad2c1b73930f558d47b5571843d7d8a5f458a6ea625726ffab713e75a2e9d034a0264faf62f286571986ce9cc522c7ee4a34d12c6caec12fbe8ed91c5be355a0
   conditions: (os=darwin | os=linux | os=win32) & (cpu=x64 | cpu=arm64 | cpu=wasm32 | cpu=arm)
   languageName: node
   linkType: hard
@@ -6891,7 +6891,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"mikro-orm@npm:7.0.5, mikro-orm@workspace:packages/mikro-orm":
+"mikro-orm@npm:7.0.6, mikro-orm@workspace:packages/mikro-orm":
   version: 0.0.0-use.local
   resolution: "mikro-orm@workspace:packages/mikro-orm"
   languageName: unknown
@@ -7840,16 +7840,16 @@ __metadata:
   languageName: node
   linkType: hard
 
-"oxlint-tsgolint@npm:^0.17.0":
-  version: 0.17.0
-  resolution: "oxlint-tsgolint@npm:0.17.0"
+"oxlint-tsgolint@npm:^0.18.0":
+  version: 0.18.1
+  resolution: "oxlint-tsgolint@npm:0.18.1"
   dependencies:
-    "@oxlint-tsgolint/darwin-arm64": "npm:0.17.0"
-    "@oxlint-tsgolint/darwin-x64": "npm:0.17.0"
-    "@oxlint-tsgolint/linux-arm64": "npm:0.17.0"
-    "@oxlint-tsgolint/linux-x64": "npm:0.17.0"
-    "@oxlint-tsgolint/win32-arm64": "npm:0.17.0"
-    "@oxlint-tsgolint/win32-x64": "npm:0.17.0"
+    "@oxlint-tsgolint/darwin-arm64": "npm:0.18.1"
+    "@oxlint-tsgolint/darwin-x64": "npm:0.18.1"
+    "@oxlint-tsgolint/linux-arm64": "npm:0.18.1"
+    "@oxlint-tsgolint/linux-x64": "npm:0.18.1"
+    "@oxlint-tsgolint/win32-arm64": "npm:0.18.1"
+    "@oxlint-tsgolint/win32-x64": "npm:0.18.1"
   dependenciesMeta:
     "@oxlint-tsgolint/darwin-arm64":
       optional: true
@@ -7865,7 +7865,7 @@ __metadata:
       optional: true
   bin:
     tsgolint: bin/tsgolint.js
-  checksum: 10/e292d224c488555ff473943a46ae24955c26a98f5fbd1f5560d93b060d418ff84d8109179f1bb7280ab42d72bb6e3f62225b399fad87ec0902954d9d8faf4529
+  checksum: 10/48a51f5d619b8a4a7b3eee5fff2b5ac6e2ed6cc06b825d13ee860cd870ea3221af1ca0874253cb908a64dbd85be717b5fa3503d2ec6cf0e211c3d81c0a93cd5c
   languageName: node
   linkType: hard
 
@@ -9692,10 +9692,10 @@ __metadata:
   languageName: node
   linkType: hard
 
-"tinyrainbow@npm:^3.0.3":
-  version: 3.0.3
-  resolution: "tinyrainbow@npm:3.0.3"
-  checksum: 10/169cc63c15e1378674180f3207c82c05bfa58fc79992e48792e8d97b4b759012f48e95297900ede24a81f0087cf329a0d85bb81109739eacf03c650127b3f6c1
+"tinyrainbow@npm:^3.1.0":
+  version: 3.1.0
+  resolution: "tinyrainbow@npm:3.1.0"
+  checksum: 10/4c2c01dde1e5bb9a74973daaae141d4d733d246280b2f9a7f6a9e7dd8e940d48b2580a6086125278777897bc44635d6ccec5f9f563c2179dd2129f4542d0ec05
   languageName: node
   linkType: hard
 
@@ -9865,7 +9865,17 @@ __metadata:
   languageName: node
   linkType: hard
 
-"typescript@npm:5.9.3, typescript@npm:>=3 < 6":
+"typescript@npm:6.0.2":
+  version: 6.0.2
+  resolution: "typescript@npm:6.0.2"
+  bin:
+    tsc: bin/tsc
+    tsserver: bin/tsserver
+  checksum: 10/b9fc2fcee7ee8e5ca6f5138181964550531e18e2d20ecb71b802d4d495881e3444e0ef94cbb6e84eb2ba41e913f6feae3ca33cc722b32e6e6dfadb32d23b80e6
+  languageName: node
+  linkType: hard
+
+"typescript@npm:>=3 < 6":
   version: 5.9.3
   resolution: "typescript@npm:5.9.3"
   bin:
@@ -9875,7 +9885,17 @@ __metadata:
   languageName: node
   linkType: hard
 
-"typescript@patch:typescript@npm%3A5.9.3#optional!builtin<compat/typescript>, typescript@patch:typescript@npm%3A>=3 < 6#optional!builtin<compat/typescript>":
+"typescript@patch:typescript@npm%3A6.0.2#optional!builtin<compat/typescript>":
+  version: 6.0.2
+  resolution: "typescript@patch:typescript@npm%3A6.0.2#optional!builtin<compat/typescript>::version=6.0.2&hash=5786d5"
+  bin:
+    tsc: bin/tsc
+    tsserver: bin/tsserver
+  checksum: 10/e5501dfcf8c5b6b9a61f6fa53decc40187cebe3a2b7b2bd51c615007ad4cf6d58298461fef63294f6be9d5f2f33019b2a2e2bf02d9cb7d7f6ec94372bf24ffa2
+  languageName: node
+  linkType: hard
+
+"typescript@patch:typescript@npm%3A>=3 < 6#optional!builtin<compat/typescript>":
   version: 5.9.3
   resolution: "typescript@patch:typescript@npm%3A5.9.3#optional!builtin<compat/typescript>::version=5.9.3&hash=5786d5"
   bin:
@@ -10073,17 +10093,17 @@ __metadata:
   languageName: node
   linkType: hard
 
-"vitest@npm:4.1.1":
-  version: 4.1.1
-  resolution: "vitest@npm:4.1.1"
+"vitest@npm:4.1.2":
+  version: 4.1.2
+  resolution: "vitest@npm:4.1.2"
   dependencies:
-    "@vitest/expect": "npm:4.1.1"
-    "@vitest/mocker": "npm:4.1.1"
-    "@vitest/pretty-format": "npm:4.1.1"
-    "@vitest/runner": "npm:4.1.1"
-    "@vitest/snapshot": "npm:4.1.1"
-    "@vitest/spy": "npm:4.1.1"
-    "@vitest/utils": "npm:4.1.1"
+    "@vitest/expect": "npm:4.1.2"
+    "@vitest/mocker": "npm:4.1.2"
+    "@vitest/pretty-format": "npm:4.1.2"
+    "@vitest/runner": "npm:4.1.2"
+    "@vitest/snapshot": "npm:4.1.2"
+    "@vitest/spy": "npm:4.1.2"
+    "@vitest/utils": "npm:4.1.2"
     es-module-lexer: "npm:^2.0.0"
     expect-type: "npm:^1.3.0"
     magic-string: "npm:^0.30.21"
@@ -10094,17 +10114,17 @@ __metadata:
     tinybench: "npm:^2.9.0"
     tinyexec: "npm:^1.0.2"
     tinyglobby: "npm:^0.2.15"
-    tinyrainbow: "npm:^3.0.3"
+    tinyrainbow: "npm:^3.1.0"
     vite: "npm:^6.0.0 || ^7.0.0 || ^8.0.0"
     why-is-node-running: "npm:^2.3.0"
   peerDependencies:
     "@edge-runtime/vm": "*"
     "@opentelemetry/api": ^1.9.0
     "@types/node": ^20.0.0 || ^22.0.0 || >=24.0.0
-    "@vitest/browser-playwright": 4.1.1
-    "@vitest/browser-preview": 4.1.1
-    "@vitest/browser-webdriverio": 4.1.1
-    "@vitest/ui": 4.1.1
+    "@vitest/browser-playwright": 4.1.2
+    "@vitest/browser-preview": 4.1.2
+    "@vitest/browser-webdriverio": 4.1.2
+    "@vitest/ui": 4.1.2
     happy-dom: "*"
     jsdom: "*"
     vite: ^6.0.0 || ^7.0.0 || ^8.0.0
@@ -10131,7 +10151,7 @@ __metadata:
       optional: false
   bin:
     vitest: vitest.mjs
-  checksum: 10/2dc81153729c57e6b3ad0aaa920a4f026b717df12741c4c520b8cd49b92fc6e21e9af1ac7568249383521311fcde28f1dfd79a666fd679316016958838249b1b
+  checksum: 10/6b037387e59d403f6570f887f6ac96b81ff6e768dbd02d32a812ddff5bdebef022dd6d9f20b84fb9535866e0c5dbdf80e6705cc428b6a8f8a8e67e1335235848
   languageName: node
   linkType: hard
 
