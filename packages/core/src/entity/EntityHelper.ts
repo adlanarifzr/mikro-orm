@@ -62,18 +62,31 @@ export class EntityHelper {
       // toJSON can be overridden
       Object.defineProperty(prototype, 'toJSON', {
         value: function (this: T, ...args: any[]) {
-          // Guard against being called on the prototype itself (e.g. by serializers
-          // walking the object graph and calling toJSON on prototype objects)
-          if (this === prototype) {
-            return {};
-          }
-
           return EntityTransformer.toObject<T>(this, ...args);
         },
         writable: true,
         configurable: true,
         enumerable: false,
       });
+    }
+
+    // Walkers / serializers reaching the prototype directly invoke its methods and
+    // accessors with `this === prototype`. Wrap each so that case is a no-op rather
+    // than throwing (when a user `@Property({ persist: false })` getter dereferences
+    // unhydrated instance state) or installing state on the prototype itself (#7151).
+    for (const name of Object.getOwnPropertyNames(prototype)) {
+      const desc = Object.getOwnPropertyDescriptor(prototype, name)!;
+      const fn: any = desc.get ?? desc.value;
+
+      if (name === 'constructor' || typeof fn !== 'function' || fn.__guarded) {
+        continue;
+      }
+
+      const guarded: any = function (this: T, ...args: any[]) {
+        return this === prototype ? undefined : fn.apply(this, args);
+      };
+      guarded.__guarded = true;
+      Object.defineProperty(prototype, name, desc.get ? { ...desc, get: guarded } : { ...desc, value: guarded });
     }
   }
 
@@ -293,10 +306,21 @@ export class EntityHelper {
           if (entity && (!prop.owner || helper(entity).__initialized)) {
             EntityHelper.propagateOneToOne(entity, owner, prop, prop2, value, old as T);
           }
+        } else if (old && old !== value) {
+          // Inverse already points to owner — propagation is not needed,
+          // but we still need to clean up old's inverse side.
+          helper(old).__pk ??= helper(old).getPrimaryKey()!;
 
-          if (old && prop.orphanRemoval) {
-            helper(old).__em?.getUnitOfWork().scheduleOrphanRemoval(old);
+          // Don't nullify the FK if it's part of the PK — the entity will be deleted via orphan removal
+          if (old[prop2.name as EntityKey<T>] != null && !(prop.orphanRemoval && prop2.primary)) {
+            delete helper(old).__data[prop2.name];
+            old[prop2.name] = null!;
           }
+        }
+
+        if (old && old !== value && prop.orphanRemoval) {
+          helper(old).__pk ??= helper(old).getPrimaryKey()!;
+          helper(old).__em?.getUnitOfWork().scheduleOrphanRemoval(old);
         }
       }
     }
@@ -341,7 +365,8 @@ export class EntityHelper {
       entity[prop2.name] = Reference.wrapReference(owner, prop) as EntityValue<T>;
     }
 
-    if (old?.[prop2.name] != null) {
+    // Don't nullify the FK if it's part of the PK — the entity will be deleted via orphan removal
+    if (old?.[prop2.name] != null && !(prop.orphanRemoval && prop2.primary)) {
       delete helper(old).__data[prop2.name];
       old[prop2.name] = null!;
     }

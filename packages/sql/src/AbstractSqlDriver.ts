@@ -535,6 +535,10 @@ export abstract class AbstractSqlDriver<
       if (parentAlias) {
         // Rename columns from this parent table
         for (const prop of parentMeta.ownProps!) {
+          if (!prop.fieldNames) {
+            continue;
+          }
+
           for (const fieldName of prop.fieldNames) {
             const aliasedKey = `${parentAlias}__${fieldName}` as EntityKey<T>;
 
@@ -1028,7 +1032,7 @@ export abstract class AbstractSqlDriver<
               if (prop.polymorphic && target instanceof PolymorphicRef) {
                 rawParam = target.toTuple();
               } else {
-                rawParam = Utils.asArray(target) ?? prop.fieldNames.map(() => null);
+                rawParam = target == null ? prop.fieldNames.map(() => null) : Utils.asArray(target);
               }
 
               // Deep flatten nested arrays when needed (for deeply nested composite keys like Tag -> Comment -> Post -> User)
@@ -1341,10 +1345,11 @@ export abstract class AbstractSqlDriver<
     sql = sql.substring(0, sql.length - 2) + ' where ';
     const pkProps = meta.primaryKeys.concat(...meta.concurrencyCheckKeys);
     const pks = Utils.flatten(pkProps.map(pk => meta.properties[pk].fieldNames));
-    sql +=
-      pks.length > 1
-        ? `(${pks.map(pk => this.platform.quoteIdentifier(pk)).join(', ')})`
-        : this.platform.quoteIdentifier(pks[0]);
+
+    const useTupleIn = pks.length <= 1 || this.platform.allowsComparingTuples();
+    const condTemplate = useTupleIn
+      ? `(${pks.map(() => '?').join(', ')})`
+      : `(${pks.map(pk => `${this.platform.quoteIdentifier(pk)} = ?`).join(' and ')})`;
 
     const conds = where.map(cond => {
       if (Utils.isPlainObject(cond) && Utils.getObjectKeysSize(cond) === 1) {
@@ -1359,13 +1364,23 @@ export abstract class AbstractSqlDriver<
             params.push(cond[pk as keyof FilterQuery<T>]);
           }
         });
-        return `(${Array.from({ length: pks.length }).fill('?').join(', ')})`;
+
+        return condTemplate;
       }
 
       params.push(cond);
       return '?';
     });
-    sql += ` in (${conds.join(', ')})`;
+
+    if (useTupleIn) {
+      sql +=
+        pks.length > 1
+          ? `(${pks.map(pk => this.platform.quoteIdentifier(pk)).join(', ')})`
+          : this.platform.quoteIdentifier(pks[0]);
+      sql += ` in (${conds.join(', ')})`;
+    } else {
+      sql += conds.join(' or ');
+    }
 
     if (this.platform.usesReturningStatement() && returning.size > 0) {
       const returningFields = Utils.flatten([...returning].map(prop => meta.properties[prop].fieldNames));
@@ -2163,6 +2178,27 @@ export abstract class AbstractSqlDriver<
         prop.targetMeta!.schema === '*' ? (options?.schema ?? this.config.get('schema')) : prop.targetMeta!.schema;
       qb.join(field as any, tableAlias, {}, joinType, path, schema);
 
+      // For relations to TPT child entities, INNER JOIN parent tables (GH #7469)
+      if (meta2.inheritanceType === 'tpt' && meta2.tptParent) {
+        let childAlias = tableAlias;
+        let childMeta: EntityMetadata = meta2;
+        while (childMeta.tptParent) {
+          const parentMeta = childMeta.tptParent;
+          const parentAlias = qb.getNextAlias(parentMeta.className);
+          qb.createAlias(parentMeta.class, parentAlias);
+          qb.state.tptAlias[`${tableAlias}:${parentMeta.className}`] = parentAlias;
+          qb.addPropertyJoin(
+            childMeta.tptParentProp!,
+            childAlias,
+            parentAlias,
+            JoinType.innerJoin,
+            `${path}.[tpt]${childMeta.className}`,
+          );
+          childAlias = parentAlias;
+          childMeta = parentMeta;
+        }
+      }
+
       // For relations to TPT base classes, add LEFT JOINs for all child tables (polymorphic loading)
       if (meta2.inheritanceType === 'tpt' && meta2.tptChildren?.length && !ref) {
         // Use the registry metadata to ensure allTPTDescendants is available
@@ -2433,8 +2469,9 @@ export abstract class AbstractSqlDriver<
       return [raw(`${this.evaluateFormula(prop.formula, columns, table)} as ${aliased}`)];
     }
 
+    const sourceAlias = qb.helper.getTPTAliasForProperty(prop.name, tableAlias);
     return prop.fieldNames.map(fieldName => {
-      return raw('?? as ??', [`${tableAlias}.${fieldName}`, `${tableAlias}__${fieldName}`]);
+      return raw('?? as ??', [`${sourceAlias}.${fieldName}`, `${tableAlias}__${fieldName}`]);
     });
   }
 

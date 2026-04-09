@@ -37,6 +37,7 @@ import type {
   IWrappedEntity,
   DefineConfig,
   Config,
+  MaybePromise,
 } from '../typings.js';
 import type { Raw } from '../utils/RawQueryFragment.js';
 import type { ScalarReference } from './Reference.js';
@@ -54,7 +55,7 @@ import type { IType, Type } from '../types/Type.js';
 import { types } from '../types/index.js';
 import { EntitySchema } from '../metadata/EntitySchema.js';
 import type { Collection } from './Collection.js';
-import type { FilterOptions } from '../drivers/IDatabaseDriver.js';
+import type { FilterOptions, FindOptions, FindOneOptions } from '../drivers/IDatabaseDriver.js';
 
 /** Union of all option keys supported across all property definition types (scalar, enum, embedded, relations). */
 export type UniversalPropertyKeys =
@@ -1217,6 +1218,7 @@ export interface EntityMetadataWithProperties<
   | 'indexes'
   | 'uniques'
   | 'repository'
+  | 'filters'
   | 'orderBy'
 > {
   name: TName;
@@ -1225,10 +1227,27 @@ export interface EntityMetadataWithProperties<
   // Also accepts entity constructors for compatibility with class-based entities
   extends?: { '~entity': TBase } | EntityCtor<TBase>;
   properties: TProperties | ((properties: PropertyBuilders) => TProperties);
-  primaryKeys?: TPK & InferPrimaryKey<TProperties>[];
+  primaryKeys?: TPK & InferPrimaryKeyConstraint<TProperties>[];
   hooks?: DefineEntityHooks;
   // Capture the repository type for InferEntity to include EntityRepositoryType
   repository?: () => TRepository;
+  // mirrors FilterDefResolved with Dictionary instead of FilterQuery for cond to avoid circular type inference (GH #7440)
+  filters?: Dictionary<{
+    name: string;
+    cond:
+      | Dictionary
+      | ((
+          args: Dictionary,
+          type: 'read' | 'update' | 'delete',
+          em: any,
+          options?: FindOptions<any, any, any, any> | FindOneOptions<any, any, any, any>,
+          entityName?: string,
+        ) => MaybePromise<FilterQuery<any>>);
+    default?: boolean;
+    entity?: EntityName<any> | EntityName<any>[];
+    args?: boolean;
+    strict?: boolean;
+  }>;
   forceObject?: TForceObject;
 
   // Table-per-type inheritance (each entity has its own table)
@@ -1509,6 +1528,15 @@ export type InferPrimaryKey<Properties extends Record<string, any>> = {
   [K in keyof Properties]: MaybeReturnType<Properties[K]> extends { '~options': { primary: true } } ? K : never;
 }[keyof Properties];
 
+/** Like InferPrimaryKey, but skips evaluating function return types to prevent circular inference (GH #7445). */
+export type InferPrimaryKeyConstraint<Properties extends Record<string, any>> = {
+  [K in keyof Properties]: Properties[K] extends (...args: any) => any
+    ? K
+    : Properties[K] extends { '~options': { primary: true } }
+      ? K
+      : never;
+}[keyof Properties];
+
 type InferBuilderValue<Builder> = Builder extends { '~type'?: { value: infer Value }; '~options'?: infer Options }
   ? MaybeHidden<
       MaybeOpt<
@@ -1558,6 +1586,12 @@ type MaybeScalarRef<Value, Options> = Options extends { kind: '1:1' | 'm:1' | '1
     ? ScalarReference<Value>
     : Value;
 
+type IsAllPropsOpt<T> = [Exclude<keyof T, symbol>] extends [never]
+  ? false
+  : { [K in Exclude<keyof T, symbol>]-?: T[K] extends Opt ? never : K }[Exclude<keyof T, symbol>] extends never
+    ? true
+    : false;
+
 type MaybeOpt<Value, Options> = Options extends { mapToPk: true }
   ? Value extends Opt<infer OriginalValue>
     ? OriginalValue
@@ -1571,12 +1605,20 @@ type MaybeOpt<Value, Options> = Options extends { mapToPk: true }
         | { version: true }
         | { formula: string | ((...args: any[]) => any) }
     ? Opt<NonNullable<Value>> | Extract<Value, null | undefined>
-    : Value;
+    : Options extends { kind: 'embedded' }
+      ? IsAllPropsOpt<Value> extends true
+        ? Opt<NonNullable<Value>> | Extract<Value, null | undefined>
+        : Value
+      : Value;
 
 type MaybeHidden<Value, Options> = Options extends { hidden: true }
   ? Hidden<NonNullable<Value>> | Extract<Value, null | undefined>
   : Value;
 
-type ValueOf<T extends Dictionary> = T[keyof T];
+type ValueOf<T extends Dictionary> = T[keyof T] extends infer V
+  ? V extends (...args: any[]) => any
+    ? never
+    : V
+  : never;
 
 type IsUnion<T, U = T> = T extends U ? ([U] extends [T] ? false : true) : false;

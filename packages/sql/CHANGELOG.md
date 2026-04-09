@@ -3,6 +3,32 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [7.0.9](https://github.com/mikro-orm/mikro-orm/compare/v7.0.8...v7.0.9) (2026-04-06)
+
+### Bug Fixes
+
+- **sql:** fix null composite FK producing `undefined` column values in `nativeInsertMany` ([#7476](https://github.com/mikro-orm/mikro-orm/issues/7476)) ([7043886](https://github.com/mikro-orm/mikro-orm/commit/7043886ff95287eb8359a3f0a1ce24b1a4353417)), closes [#7475](https://github.com/mikro-orm/mikro-orm/issues/7475)
+- **sql:** fix populate of 1:1 on TPT leaf entity with joined strategy ([#7474](https://github.com/mikro-orm/mikro-orm/issues/7474)) ([053881c](https://github.com/mikro-orm/mikro-orm/commit/053881cf6a3fdaffd8ac7af7cc8ab58115e6604e)), closes [#7469](https://github.com/mikro-orm/mikro-orm/issues/7469)
+- **sql:** skip relation props without fieldNames in TPT column mapping ([#7472](https://github.com/mikro-orm/mikro-orm/issues/7472)) ([b63d6ba](https://github.com/mikro-orm/mikro-orm/commit/b63d6ba72841a31390569a4eb193b8558c85e071)), closes [#7471](https://github.com/mikro-orm/mikro-orm/issues/7471)
+
+## [7.0.8](https://github.com/mikro-orm/mikro-orm/compare/v7.0.7...v7.0.8) (2026-04-01)
+
+### Bug Fixes
+
+- **sql:** use pivot entity schema for wildcard check in M:N joins ([#7466](https://github.com/mikro-orm/mikro-orm/issues/7466)) ([cd0d47d](https://github.com/mikro-orm/mikro-orm/commit/cd0d47d012947e1872877ec97544c104110f3ca6))
+
+## [7.0.7](https://github.com/mikro-orm/mikro-orm/compare/v7.0.6...v7.0.7) (2026-03-31)
+
+### Bug Fixes
+
+- **mssql:** use equality conditions for composite PK batch updates ([#7442](https://github.com/mikro-orm/mikro-orm/issues/7442)) ([ba4063b](https://github.com/mikro-orm/mikro-orm/commit/ba4063bffdfc7ea3e5495b2235f7778d6b1abf06))
+- **sql:** fix count queries with composite PKs and toMany joins ([#7415](https://github.com/mikro-orm/mikro-orm/issues/7415)) ([bb0d66c](https://github.com/mikro-orm/mikro-orm/commit/bb0d66cf41bbff7ed9cefe37b4e3d3f4f945a5a5)), closes [#7414](https://github.com/mikro-orm/mikro-orm/issues/7414)
+- **sql:** fix nativeEnumName schema handling with config-level schema ([#7435](https://github.com/mikro-orm/mikro-orm/issues/7435)) ([2ddd288](https://github.com/mikro-orm/mikro-orm/commit/2ddd28839662412fce2ab4a4c0cb054ade0fdba3)), closes [#7432](https://github.com/mikro-orm/mikro-orm/issues/7432)
+- **sql:** generate indexes for materialized view entities ([#7419](https://github.com/mikro-orm/mikro-orm/issues/7419)) ([bf86941](https://github.com/mikro-orm/mikro-orm/commit/bf86941e27b75e23cf69bd5d51df88fd2e585ccc)), closes [#7417](https://github.com/mikro-orm/mikro-orm/issues/7417)
+- **sql:** infer Kysely table names for classes extending `defineEntity().class` ([#7425](https://github.com/mikro-orm/mikro-orm/issues/7425)) ([469a667](https://github.com/mikro-orm/mikro-orm/commit/469a66720157ea3dd1564d0502f3e9dae097b0c4)), closes [#7423](https://github.com/mikro-orm/mikro-orm/issues/7423)
+- **sql:** pass transaction context through schema introspection to avoid deadlock ([#7426](https://github.com/mikro-orm/mikro-orm/issues/7426)) ([2a1bc05](https://github.com/mikro-orm/mikro-orm/commit/2a1bc05452cd34361bcef8d8f0a1cc110bd6cf72)), closes [#7424](https://github.com/mikro-orm/mikro-orm/issues/7424)
+- **sql:** resolve alias placeholder in raw fragments used as operator values ([#7427](https://github.com/mikro-orm/mikro-orm/issues/7427)) ([d23d30b](https://github.com/mikro-orm/mikro-orm/commit/d23d30b172cf3a5574e40744f3d1499dc5e0427b)), closes [#7422](https://github.com/mikro-orm/mikro-orm/issues/7422)
+
 ## [7.0.6](https://github.com/mikro-orm/mikro-orm/compare/v7.0.5...v7.0.6) (2026-03-26)
 
 ### Bug Fixes

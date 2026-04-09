@@ -418,7 +418,13 @@ export class UnitOfWork {
     }
 
     this.initIdentifier(entity);
-    this.#changeSets.set(entity, cs);
+
+    if (wrapped.__meta.inheritanceType === 'tpt' && wrapped.__meta.tptParent) {
+      this.createTPTChangeSets(entity, cs);
+    } else {
+      this.#changeSets.set(entity, cs);
+    }
+
     this.#persistStack.delete(entity);
     wrapped.__originalEntityData = this.#comparator.prepareEntity(entity);
   }
@@ -434,8 +440,44 @@ export class UnitOfWork {
     const cs = this.#changeSetComputer.computeChangeSet(entity);
 
     if (cs && !this.checkUniqueProps(cs)) {
-      Object.assign(changeSet.payload, cs.payload);
-      helper(entity).__originalEntityData = this.#comparator.prepareEntity(entity);
+      const wrapped = helper(entity);
+
+      // For TPT entities, update only each table's own properties so parent
+      // columns don't leak into the leaf table's INSERT/UPDATE (GH #7455).
+      if (wrapped.__meta.inheritanceType === 'tpt' && wrapped.__meta.tptParent) {
+        for (const prop of wrapped.__meta.ownProps!) {
+          if (prop.name in cs.payload) {
+            (changeSet.payload as Dictionary)[prop.name] = (cs.payload as Dictionary)[prop.name];
+          }
+        }
+
+        changeSet.tptChangeSets ??= [];
+        let current: EntityMetadata | undefined = wrapped.__meta.tptParent;
+        let idx = 0;
+
+        while (current) {
+          let parentCs = changeSet.tptChangeSets.find(pc => pc.meta === current);
+
+          if (!parentCs) {
+            parentCs = new ChangeSet(entity, changeSet.type, {} as EntityDictionary<T>, current as EntityMetadata<T>);
+            changeSet.tptChangeSets.splice(idx, 0, parentCs);
+          }
+
+          idx++;
+
+          for (const prop of current.ownProps!) {
+            if (prop.name in cs.payload) {
+              (parentCs.payload as Dictionary)[prop.name] = (cs.payload as Dictionary)[prop.name];
+            }
+          }
+
+          current = current.tptParent;
+        }
+      } else {
+        Object.assign(changeSet.payload, cs.payload);
+      }
+
+      wrapped.__originalEntityData = this.#comparator.prepareEntity(entity);
     }
   }
 
@@ -1304,7 +1346,14 @@ export class UnitOfWork {
     await this.#changeSetPersister.executeInserts(changeSets, { ctx });
 
     for (const changeSet of changeSets) {
-      this.register<T>(changeSet.entity, changeSet.payload, { refresh: true });
+      // For TPT entities, use the full entity snapshot instead of the partial changeset payload,
+      // since each table's changeset only contains its own properties. Without this, the snapshot
+      // would only have the last table's properties, causing spurious UPDATEs on next flush (GH #7454).
+      const data =
+        changeSet.meta.inheritanceType === 'tpt'
+          ? (this.#comparator.prepareEntity(changeSet.entity) as EntityData<T>)
+          : changeSet.payload;
+      this.register<T>(changeSet.entity, data, { refresh: true });
       await this.runHooks(EventType.afterCreate, changeSet);
     }
   }
@@ -1552,23 +1601,24 @@ export class UnitOfWork {
 
   private getCommitOrder(): EntityMetadata[] {
     const calc = new CommitOrderCalculator();
-    const set = new Set<EntityMetadata>();
+    // keyed by `_id` so we return the SAME instances as the change set groups (GH #7511)
+    const metaById = new Map<number, EntityMetadata>();
 
     this.#changeSets.forEach(cs => {
       if (cs.meta.inheritanceType === 'tpt') {
-        set.add(cs.meta);
+        metaById.set(cs.meta._id, cs.meta);
 
         for (const parentCs of cs.tptChangeSets ?? []) {
-          set.add(parentCs.meta);
+          metaById.set(parentCs.meta._id, parentCs.meta);
         }
       } else {
-        set.add(cs.rootMeta);
+        metaById.set(cs.rootMeta._id, cs.rootMeta);
       }
     });
 
-    set.forEach(meta => calc.addNode(meta._id));
+    metaById.forEach(meta => calc.addNode(meta._id));
 
-    for (const meta of set) {
+    for (const meta of metaById.values()) {
       for (const prop of meta.relations) {
         if (prop.polymorphTargets) {
           for (const targetMeta of prop.polymorphTargets) {
@@ -1580,12 +1630,12 @@ export class UnitOfWork {
       }
 
       // For TPT, parent table must be inserted BEFORE child tables
-      if (meta.inheritanceType === 'tpt' && meta.tptParent && set.has(meta.tptParent)) {
+      if (meta.inheritanceType === 'tpt' && meta.tptParent && metaById.has(meta.tptParent._id)) {
         calc.addDependency(meta.tptParent._id, meta._id, 1);
       }
     }
 
-    return calc.sort().map(id => this.#metadata.getById(id));
+    return calc.sort().map(id => metaById.get(id)!);
   }
 
   private resetTransaction(oldTx?: Transaction): void {

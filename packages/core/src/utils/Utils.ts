@@ -853,8 +853,10 @@ export class Utils {
    * Extracts all possible values of a TS enum. Works with both string and numeric enums.
    */
   static extractEnumValues(target: Dictionary): (string | number)[] {
-    const keys = Object.keys(target);
-    const values = Object.values<string | number>(target);
+    // skip namespace-merged functions (GH #7500)
+    const entries = Object.entries(target).filter(([, v]) => typeof v !== 'function');
+    const keys = entries.map(([k]) => k);
+    const values = entries.map(([, v]) => v) as (string | number)[];
     const numeric = !!values.find(v => typeof v === 'number');
     const constEnum =
       values.length % 2 === 0 && // const enum will have even number of items

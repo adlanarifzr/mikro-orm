@@ -525,7 +525,7 @@ export class MetadataDiscovery {
 
       if (prop.joinColumns.length > 1) {
         prop.ownColumns = prop.joinColumns.filter(col => {
-          return !meta.props.find(p => p.name !== prop.name && (!p.fieldNames || p.fieldNames.includes(col)));
+          return !meta.props.find(p => p.name !== prop.name && p.fieldNames?.includes(col));
         });
       }
 
@@ -566,7 +566,7 @@ export class MetadataDiscovery {
     }
   }
 
-  private initManyToOneFieldName(prop: EntityProperty, name: string, tableName?: string): string[] {
+  private initManyToOneFieldName(prop: EntityProperty, name: string): string[] {
     const meta2 = prop.targetMeta!;
     const ret: string[] = [];
 
@@ -574,7 +574,7 @@ export class MetadataDiscovery {
       this.initFieldName(meta2.properties[primaryKey]);
 
       for (const fieldName of meta2.properties[primaryKey].fieldNames) {
-        ret.push(this.#namingStrategy.joinKeyColumnName(name, fieldName, meta2.compositePK, tableName));
+        ret.push(this.#namingStrategy.joinKeyColumnName(name, fieldName, meta2.compositePK));
       }
     }
 
@@ -644,19 +644,12 @@ export class MetadataDiscovery {
         ),
       );
     } else {
-      const ownerTableName = this.isExplicitTableName(meta.root) ? meta.root.tableName : undefined;
       prop.joinColumns ??= prop.referencedColumnNames.map(referencedColumnName =>
-        this.#namingStrategy.joinKeyColumnName(
-          meta.root.className,
-          referencedColumnName,
-          meta.compositePK,
-          ownerTableName,
-        ),
+        this.#namingStrategy.joinKeyColumnName(meta.root.className, referencedColumnName, meta.compositePK),
       );
     }
 
-    const inverseTableName = this.isExplicitTableName(meta2.root) ? meta2.root.tableName : undefined;
-    prop.inverseJoinColumns ??= this.initManyToOneFieldName(prop, meta2.root.className, inverseTableName);
+    prop.inverseJoinColumns ??= this.initManyToOneFieldName(prop, meta2.root.className);
   }
 
   private isExplicitTableName(meta: EntityMetadata): boolean {
@@ -1656,6 +1649,21 @@ export class MetadataDiscovery {
 
       if (prop.enum && prop.items && rootProp?.items) {
         newProp.items = Utils.unique([...rootProp.items, ...prop.items]);
+      }
+
+      // When multiple STI children share the same unique relation (OneToOne/ManyToOne),
+      // replace the simple unique with a composite one including the discriminator column
+      // so different subtypes can independently reference the same target row.
+      if (
+        rootProp?.unique &&
+        newProp.unique &&
+        [ReferenceKind.ONE_TO_ONE, ReferenceKind.MANY_TO_ONE].includes(newProp.kind)
+      ) {
+        newProp.unique = false;
+        rootProp.unique = false;
+        meta.root.uniques.push({
+          properties: [prop.name, meta.root.discriminatorColumn!] as EntityKey[],
+        });
       }
 
       newProp.nullable = true;

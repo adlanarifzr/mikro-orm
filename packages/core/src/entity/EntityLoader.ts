@@ -141,6 +141,37 @@ export class EntityLoader {
       await this.populateField<Entity>(entityName, entities, pop, options as Required<EntityLoaderOptions<Entity>>);
     }
 
+    // Child-specific relations exist only on child metadata, so the parent-scoped populate loop above skips them (GH #7453).
+    if (
+      Array.isArray(populate) &&
+      populate.some(p => p.all) &&
+      meta.inheritanceType === 'tpt' &&
+      meta.tptChildren?.length
+    ) {
+      const byType = new Map<EntityMetadata, Entity[]>();
+
+      for (const entity of entities) {
+        const entityMeta = helper(entity).__meta;
+
+        if (entityMeta !== meta) {
+          const group = byType.get(entityMeta);
+          if (group) {
+            group.push(entity);
+          } else {
+            byType.set(entityMeta, [entity]);
+          }
+        }
+      }
+
+      for (const [childMeta, group] of byType) {
+        await this.populate(childMeta.class as EntityName<Entity>, group, true, {
+          ...options,
+          lookup: false,
+          validate: false,
+        });
+      }
+    }
+
     for (const entity of entities) {
       visited.delete(entity);
     }
@@ -650,11 +681,21 @@ export class EntityLoader {
         childrenMap.add(getKey(child));
       }
 
-      for (const entity of entities) {
-        const ref = (entity[prop.name] as AnyEntity) ?? {};
-        const key = helper(ref) ? getKey(ref) : undefined;
+      const isInverseOneToOne = prop.kind === ReferenceKind.ONE_TO_ONE && !prop.owner;
 
-        if (key && childrenMap.has(key) && !itemsMap.has(key)) {
+      for (const entity of entities) {
+        const ref = entity[prop.name] as AnyEntity | null | undefined;
+
+        if (ref == null) {
+          continue;
+        }
+
+        const refKey = getKey(ref);
+        // For 1:1 inverse, `children` contains parent entities, so `childrenMap`
+        // has parent PKs — match against the entity's own PK, not the referenced entity's PK.
+        const childKey = isInverseOneToOne ? getKey(entity as AnyEntity) : refKey;
+
+        if (childrenMap.has(childKey) && !itemsMap.has(refKey)) {
           entity[prop.name] = nullVal as EntityValue<Entity>;
           helper(entity).__originalEntityData![prop.name] = null;
         }
@@ -1081,6 +1122,12 @@ export class EntityLoader {
         all: true,
       });
     });
+
+    // For TPT parents with child types, keep an all:true sentinel so the populate
+    // loop doesn't exit early and the TPT child relation population can run after it.
+    if (ret.length === 0 && meta.inheritanceType === 'tpt' && meta.tptChildren?.length) {
+      ret.push({ field: meta.primaryKeys[0], strategy: LoadStrategy.SELECT_IN, all: true } as PopulateOptions<Entity>);
+    }
 
     return ret;
   }

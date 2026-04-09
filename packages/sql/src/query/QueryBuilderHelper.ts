@@ -88,7 +88,8 @@ export class QueryBuilderHelper {
     let parentMeta: EntityMetadata | undefined = meta.tptParent;
 
     while (parentMeta) {
-      const parentAlias = this.#tptAliasMap[parentMeta.className];
+      const parentAlias =
+        this.#tptAliasMap[`${defaultAlias}:${parentMeta.className}`] ?? this.#tptAliasMap[parentMeta.className];
 
       if (parentAlias && parentMeta.ownProps?.some(p => p.name === propName || p.fieldNames?.includes(propName))) {
         return parentAlias;
@@ -343,7 +344,7 @@ export class QueryBuilderHelper {
         primaryKeys: prop.referencedColumnNames,
         cond: {},
         table: pivotMeta.tableName,
-        schema: prop.targetMeta?.schema === '*' ? '*' : this.#driver.getSchemaName(pivotMeta, { schema }),
+        schema: pivotMeta.schema === '*' ? '*' : this.#driver.getSchemaName(pivotMeta, { schema }),
         path: path.endsWith('[pivot]') ? path : `${path}[pivot]`,
       } as JoinOptions,
     };
@@ -828,7 +829,7 @@ export class QueryBuilderHelper {
       const query = value[op] instanceof Raw ? value[op] : value[op].toRaw();
       const mappedKey = this.mapper(key, type, query, null);
 
-      let sql = query.sql;
+      let sql = query.sql.replaceAll(ALIAS_REPLACEMENT, this.#alias);
 
       if (['$in', '$nin'].includes(op)) {
         sql = `(${sql})`;

@@ -3,6 +3,44 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [7.0.9](https://github.com/mikro-orm/mikro-orm/compare/v7.0.8...v7.0.9) (2026-04-06)
+
+### Bug Fixes
+
+- **core:** escape special characters in base Platform array marshalling ([#7489](https://github.com/mikro-orm/mikro-orm/issues/7489)) ([9bc798f](https://github.com/mikro-orm/mikro-orm/commit/9bc798fedf9aeb8e5ed42aea30a1edeaa26f2c15)), closes [#7488](https://github.com/mikro-orm/mikro-orm/issues/7488)
+- **core:** include generated columns in mergeData diff for identity map reuse ([#7491](https://github.com/mikro-orm/mikro-orm/issues/7491)) ([97fd5c6](https://github.com/mikro-orm/mikro-orm/commit/97fd5c6dbc449893628245026772822e40f4802e)), closes [#7421](https://github.com/mikro-orm/mikro-orm/issues/7421) [#7486](https://github.com/mikro-orm/mikro-orm/issues/7486)
+- **core:** resolve EntityIdentifier in composite FK with shared join columns ([#7477](https://github.com/mikro-orm/mikro-orm/issues/7477)) ([cb44ba0](https://github.com/mikro-orm/mikro-orm/commit/cb44ba007a75171878bfc59eb899ab395e1119ed))
+- **core:** respect compiledFunctions in driver's EntityComparator ([#7494](https://github.com/mikro-orm/mikro-orm/issues/7494)) ([d2c5cce](https://github.com/mikro-orm/mikro-orm/commit/d2c5cceacc029bb2bed7bb4c163ada4713c92c99))
+- **core:** skip shared join columns with null value in mapDataToFieldNames ([#7490](https://github.com/mikro-orm/mikro-orm/issues/7490)) ([f6b4273](https://github.com/mikro-orm/mikro-orm/commit/f6b4273c49a5c3e4998012ddcd14377423ee6217))
+- **core:** use symbol brand in CollectionShape to prevent false structural matches ([#7473](https://github.com/mikro-orm/mikro-orm/issues/7473)) ([c9e93e4](https://github.com/mikro-orm/mikro-orm/commit/c9e93e47495ed9f991423bde8adf8b63f11432e5)), closes [#7470](https://github.com/mikro-orm/mikro-orm/issues/7470)
+- **sql:** use composite unique constraint for OneToOne on STI entities ([#7480](https://github.com/mikro-orm/mikro-orm/issues/7480)) ([cef70b9](https://github.com/mikro-orm/mikro-orm/commit/cef70b9f865e5ea93cf65e6cfbbdea0579085e32)), closes [#7479](https://github.com/mikro-orm/mikro-orm/issues/7479)
+
+## [7.0.8](https://github.com/mikro-orm/mikro-orm/compare/v7.0.7...v7.0.8) (2026-04-01)
+
+### Bug Fixes
+
+- **core:** exclude namespace functions from enum type inference in `defineEntity` ([#7449](https://github.com/mikro-orm/mikro-orm/issues/7449)) ([3ed8060](https://github.com/mikro-orm/mikro-orm/commit/3ed806004f5226d0e44cf71d04e826cb8e9256ab)), closes [#7446](https://github.com/mikro-orm/mikro-orm/issues/7446)
+- **core:** fix wrong column name for nested inline embeddables when parent is null ([#7464](https://github.com/mikro-orm/mikro-orm/issues/7464)) ([b784da9](https://github.com/mikro-orm/mikro-orm/commit/b784da9efbbbe826f84f7a7c1222ad2f8eddc27c)), closes [#7463](https://github.com/mikro-orm/mikro-orm/issues/7463)
+- **core:** make recomputeSingleChangeSet TPT-aware ([#7460](https://github.com/mikro-orm/mikro-orm/issues/7460)) ([618695d](https://github.com/mikro-orm/mikro-orm/commit/618695d292021036364cb1fe9d756e390e3d7772)), closes [#7455](https://github.com/mikro-orm/mikro-orm/issues/7455)
+- **core:** populate child-specific relations for TPT entities with `populate: ['*']` ([#7459](https://github.com/mikro-orm/mikro-orm/issues/7459)) ([8962ef9](https://github.com/mikro-orm/mikro-orm/commit/8962ef9bb0e1cadef2513b98ca08c62daad903f9)), closes [#7453](https://github.com/mikro-orm/mikro-orm/issues/7453)
+- **core:** resolve circular type inference in `defineEntity` with composite `primaryKeys` ([#7447](https://github.com/mikro-orm/mikro-orm/issues/7447)) ([b5e6442](https://github.com/mikro-orm/mikro-orm/commit/b5e6442bb43772547013f49cf2818843cfc3e66b)), closes [#7445](https://github.com/mikro-orm/mikro-orm/issues/7445)
+- **core:** skip FK nullification on orphan removal when FK is part of PK ([#7462](https://github.com/mikro-orm/mikro-orm/issues/7462)) ([134eca7](https://github.com/mikro-orm/mikro-orm/commit/134eca70ba5fcfbfb7f6ca1e544decaaa357d116)), closes [#7461](https://github.com/mikro-orm/mikro-orm/issues/7461)
+- **core:** use full entity snapshot for TPT entities in commitCreateChangeSets ([#7458](https://github.com/mikro-orm/mikro-orm/issues/7458)) ([0a0a1c0](https://github.com/mikro-orm/mikro-orm/commit/0a0a1c0b37027e102fbf98a140336a9855c19104)), closes [#7454](https://github.com/mikro-orm/mikro-orm/issues/7454)
+
+## [7.0.7](https://github.com/mikro-orm/mikro-orm/compare/v7.0.6...v7.0.7) (2026-03-31)
+
+### Bug Fixes
+
+- **core:** apply embedded sub-property defaults during upsert ([#7411](https://github.com/mikro-orm/mikro-orm/issues/7411)) ([baf89e1](https://github.com/mikro-orm/mikro-orm/commit/baf89e1269985eebb906afbc601e1d3aa3c7e66f))
+- **core:** fire orphan removal for OneToOne replacement when inverse already set ([#7436](https://github.com/mikro-orm/mikro-orm/issues/7436)) ([6e4fe2a](https://github.com/mikro-orm/mikro-orm/commit/6e4fe2af14ddf613d086969fa8bb3a5a18dfe76a))
+- **core:** preserve user changes on references during initialization ([#7421](https://github.com/mikro-orm/mikro-orm/issues/7421)) ([69ed5be](https://github.com/mikro-orm/mikro-orm/commit/69ed5be3213672e81135da00f6819c3b19de0b94))
+- **core:** prevent incorrect nullification of 1:1 inverse relations during joined loading ([#7434](https://github.com/mikro-orm/mikro-orm/issues/7434)) ([725e924](https://github.com/mikro-orm/mikro-orm/commit/725e9244f19057f99423a2e1bcc6e3fcff9d6f3d))
+- **core:** resolve circular type inference in defineEntity with repository + filters ([#7441](https://github.com/mikro-orm/mikro-orm/issues/7441)) ([0ad9c60](https://github.com/mikro-orm/mikro-orm/commit/0ad9c60153997e9821e03602874c33916b7ba0c7)), closes [#7440](https://github.com/mikro-orm/mikro-orm/issues/7440)
+- **core:** resolve entity name from registry in MetadataProvider ([#7408](https://github.com/mikro-orm/mikro-orm/issues/7408)) ([6953f34](https://github.com/mikro-orm/mikro-orm/commit/6953f3426e931f4be6054674f8d13efe7527fd9f))
+- **core:** skip required validation for embeddables with only formula properties ([#7429](https://github.com/mikro-orm/mikro-orm/issues/7429)) ([88eb092](https://github.com/mikro-orm/mikro-orm/commit/88eb0923937540765265bd2b8f2b232948f4bab4))
+- **core:** use className instead of tableName for pivot join column names ([#7430](https://github.com/mikro-orm/mikro-orm/issues/7430)) ([5767c20](https://github.com/mikro-orm/mikro-orm/commit/5767c202f268af1e7f3b1abac0e013cce4e0a843))
+- **sql:** infer Kysely table names for classes extending `defineEntity().class` ([#7425](https://github.com/mikro-orm/mikro-orm/issues/7425)) ([469a667](https://github.com/mikro-orm/mikro-orm/commit/469a66720157ea3dd1564d0502f3e9dae097b0c4)), closes [#7423](https://github.com/mikro-orm/mikro-orm/issues/7423)
+
 ## [7.0.6](https://github.com/mikro-orm/mikro-orm/compare/v7.0.5...v7.0.6) (2026-03-26)
 
 ### Bug Fixes

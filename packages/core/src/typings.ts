@@ -113,7 +113,7 @@ export type MaybePromise<T> = T | Promise<T>;
  * - Matching only: `T extends CollectionShape`
  * - With inference: `T extends CollectionShape<infer U>`
  */
-type CollectionShape<T = any> = { [k: number]: T; readonly owner: object };
+type CollectionShape<T = any> = { [k: number]: T; readonly [CollectionBrand]: true };
 
 /**
  * Structural type for matching LoadedCollection (extends CollectionShape with `$` property).
@@ -186,6 +186,9 @@ export const EntityRepositoryType = Symbol('EntityRepositoryType');
 
 /** Symbol used to declare the primary key property name(s) on an entity (e.g., `[PrimaryKeyProp]?: 'id'`). */
 export const PrimaryKeyProp = Symbol('PrimaryKeyProp');
+
+/** Symbol used as a brand on `CollectionShape` to prevent false structural matches with entities that have properties like `owner`. */
+export const CollectionBrand = Symbol('CollectionBrand');
 
 /** Symbol used to declare which properties are optional in `em.create()` (e.g., `[OptionalProps]?: 'createdAt'`). */
 export const OptionalProps = Symbol('OptionalProps');
@@ -2133,6 +2136,8 @@ export interface EntitySchemaWithMeta<
   readonly tableName: TTableName;
   /** @internal Direct entity type access - avoids expensive pattern matching */
   readonly '~entity': TEntity;
+  /** @internal */
+  readonly class: TClass & { '~entityName'?: TName };
 }
 
 /**

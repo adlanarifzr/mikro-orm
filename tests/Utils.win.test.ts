@@ -313,11 +313,36 @@ describe('Utils', () => {
       Cancelled,
     }
 
+    // GH #7500: enums merged with a namespace containing functions
+    // simulate the runtime shape produced by `enum X {} namespace X { export function f() {} }`
+    const NumericWithNs = {
+      0: 'Pending',
+      1: 'Success',
+      2: 'Error',
+      3: 'Running',
+      Pending: 0,
+      Success: 1,
+      Error: 2,
+      Running: 3,
+      isComplete(status: number) {
+        return status === 1 || status === 2;
+      },
+    };
+    const StringWithNs = {
+      LOCAL: 'local',
+      GLOBAL: 'global',
+      isLocal(type: string) {
+        return type === 'local';
+      },
+    };
+
     expect(Utils.extractEnumValues(PublisherType)).toEqual(['local', 'global']);
     expect(Utils.extractEnumValues(PublisherType2)).toEqual(['LOCAL', 'GLOBAL']);
     expect(Utils.extractEnumValues(PublisherType3)).toEqual(['local', 'GLOBAL']);
     expect(Utils.extractEnumValues(Enum2)).toEqual([1, 2]);
     expect(Utils.extractEnumValues(Enum3)).toEqual([0, 1, 2, 3]);
+    expect(Utils.extractEnumValues(NumericWithNs)).toEqual([0, 1, 2, 3]);
+    expect(Utils.extractEnumValues(StringWithNs)).toEqual(['local', 'global']);
   });
 
   test('lookup path from decorator', () => {

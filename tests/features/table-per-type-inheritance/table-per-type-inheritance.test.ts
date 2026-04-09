@@ -1,4 +1,5 @@
-import { Collection, EntitySchema, MikroORM, quote, Ref, wrap, raw, Type, Opt } from '@mikro-orm/sqlite';
+import { Collection, EntitySchema, MikroORM, quote, Ref, wrap, raw, Type, Opt, ChangeSetType } from '@mikro-orm/sqlite';
+import type { EventSubscriber, FlushEventArgs } from '@mikro-orm/sqlite';
 import {
   Embeddable,
   Embedded,
@@ -2810,6 +2811,643 @@ describe('TPT QueryBuilder update/delete', () => {
 
     const logs = mock.mock.calls.map(c => c[0]);
     expect(logs.some((l: string) => l.includes('delete from `foo_integration`'))).toBe(true);
+
+    await orm.close();
+  });
+});
+
+// GH #7454
+describe('TPT sequential flush regression', () => {
+  test('sequential flush of unchanged TPT entity does not trigger update', async () => {
+    const orm = await MikroORM.init({
+      metadataProvider: ReflectMetadataProvider,
+      dbName: ':memory:',
+      entities: [Integration, FooIntegration, BarIntegration, BazIntegration],
+    });
+    await orm.schema.create();
+
+    orm.em.create(FooIntegration, {
+      name: 'Foo Integration',
+      fooData: 'foo-data',
+    });
+    await orm.em.flush();
+
+    const mock = mockLogger(orm);
+    // Second flush without changes — should NOT produce any queries
+    await orm.em.flush();
+
+    const logs = mock.mock.calls.map(c => c[0]);
+    expect(logs.some((l: string) => l.includes('update'))).toBe(false);
+
+    await orm.close();
+  });
+
+  test('sequential flush of unchanged multi-level TPT entity does not trigger update', async () => {
+    const orm = await MikroORM.init({
+      metadataProvider: ReflectMetadataProvider,
+      dbName: ':memory:',
+      entities: [Integration, FooIntegration, BarIntegration, BazIntegration],
+    });
+    await orm.schema.create();
+
+    orm.em.create(BazIntegration, {
+      name: 'Baz Integration',
+      barData: 'bar-data',
+      bazData: 'baz-data',
+    });
+    await orm.em.flush();
+
+    const mock = mockLogger(orm);
+    await orm.em.flush();
+
+    const logs = mock.mock.calls.map(c => c[0]);
+    expect(logs.some((l: string) => l.includes('update'))).toBe(false);
+
+    await orm.close();
+  });
+});
+
+// GH #7453
+describe('TPT child relation population regression', () => {
+  @Entity({ inheritance: 'tpt' })
+  abstract class Person7453 {
+    @PrimaryKey()
+    id!: number;
+
+    @Property()
+    name!: string;
+  }
+
+  @Entity()
+  class Address7453 {
+    @PrimaryKey()
+    id!: number;
+
+    @Property()
+    street!: string;
+  }
+
+  @Entity()
+  class Employee7453 extends Person7453 {
+    @Property()
+    department!: string;
+
+    @ManyToOne(() => Address7453, { ref: true, nullable: true })
+    address?: Ref<Address7453>;
+  }
+
+  test('child-specific relations are populated when querying via parent type with populate: *', async () => {
+    const orm = await MikroORM.init({
+      metadataProvider: ReflectMetadataProvider,
+      dbName: ':memory:',
+      entities: [Person7453, Employee7453, Address7453],
+    });
+    await orm.schema.create();
+
+    const address = orm.em.create(Address7453, { street: '123 Main St' });
+    orm.em.create(Employee7453, {
+      name: 'John Doe',
+      department: 'Engineering',
+      address,
+    });
+    await orm.em.flush();
+    orm.em.clear();
+
+    // Query via parent type with populate: ['*']
+    const person = await orm.em.findOneOrFail(Person7453, { name: 'John Doe' }, { populate: ['*'] });
+    expect(person).toBeInstanceOf(Employee7453);
+    expect((person as Employee7453).address).toBeDefined();
+    expect((person as Employee7453).address!.unwrap()).toBeInstanceOf(Address7453);
+    expect((person as Employee7453).address!.unwrap().street).toBe('123 Main St');
+
+    await orm.close();
+  });
+
+  test('child-specific relations are populated with populate: true (boolean form)', async () => {
+    const orm = await MikroORM.init({
+      metadataProvider: ReflectMetadataProvider,
+      dbName: ':memory:',
+      entities: [Person7453, Employee7453, Address7453],
+    });
+    await orm.schema.create();
+
+    const address = orm.em.create(Address7453, { street: '456 Oak Ave' });
+    orm.em.create(Employee7453, {
+      name: 'Jane Doe',
+      department: 'Sales',
+      address,
+    });
+    await orm.em.flush();
+    orm.em.clear();
+
+    const person = await orm.em.findOneOrFail(Person7453, { name: 'Jane Doe' }, { populate: true as any });
+    expect(person).toBeInstanceOf(Employee7453);
+    expect((person as Employee7453).address!.unwrap()).toBeInstanceOf(Address7453);
+    expect((person as Employee7453).address!.unwrap().street).toBe('456 Oak Ave');
+
+    await orm.close();
+  });
+});
+
+// GH #7453 — additional coverage for populateTPTChildRelations branches
+describe('TPT child relation population - additional coverage', () => {
+  @Entity()
+  class Addr7453 {
+    @PrimaryKey()
+    id!: number;
+
+    @Property()
+    street!: string;
+  }
+
+  @Entity({ inheritance: 'tpt' })
+  abstract class Base7453 {
+    @PrimaryKey()
+    id!: number;
+
+    @Property()
+    name!: string;
+
+    @ManyToOne(() => Addr7453, { ref: true, nullable: true })
+    sharedAddr?: Ref<Addr7453>;
+  }
+
+  @Entity()
+  class Child7453 extends Base7453 {
+    @Property()
+    extra!: string;
+
+    @ManyToOne(() => Addr7453, { ref: true, nullable: true })
+    childAddr?: Ref<Addr7453>;
+  }
+
+  test('multiple children with inherited + own relations are all populated', async () => {
+    const orm = await MikroORM.init({
+      metadataProvider: ReflectMetadataProvider,
+      dbName: ':memory:',
+      entities: [Base7453, Child7453, Addr7453],
+    });
+    await orm.schema.create();
+
+    const shared = orm.em.create(Addr7453, { street: 'Shared St' });
+    const addr1 = orm.em.create(Addr7453, { street: 'Child St 1' });
+    const addr2 = orm.em.create(Addr7453, { street: 'Child St 2' });
+    orm.em.create(Child7453, { name: 'A', extra: 'a', sharedAddr: shared, childAddr: addr1 });
+    orm.em.create(Child7453, { name: 'B', extra: 'b', sharedAddr: shared, childAddr: addr2 });
+    await orm.em.flush();
+    orm.em.clear();
+
+    const results = await orm.em.find(Base7453, {}, { populate: ['*'] });
+    expect(results).toHaveLength(2);
+
+    for (const entity of results) {
+      expect(entity).toBeInstanceOf(Child7453);
+      const child = entity as Child7453;
+      // Parent relation (inherited) should be populated via main loop
+      expect(child.sharedAddr!.unwrap().street).toBe('Shared St');
+      // Child-only relation should be populated via populateTPTChildRelations
+      expect(child.childAddr!.unwrap()).toBeInstanceOf(Addr7453);
+    }
+
+    expect((results[0] as Child7453).childAddr!.unwrap().street).toBe('Child St 1');
+    expect((results[1] as Child7453).childAddr!.unwrap().street).toBe('Child St 2');
+
+    await orm.close();
+  });
+});
+
+// GH #7453 — covers continue branch when entity is the parent type itself
+describe('TPT child relation population - non-abstract parent', () => {
+  @Entity()
+  class Tag7453 {
+    @PrimaryKey()
+    id!: number;
+
+    @Property()
+    label!: string;
+  }
+
+  @Entity({ inheritance: 'tpt' })
+  class Vehicle7453 {
+    @PrimaryKey()
+    id!: number;
+
+    @Property()
+    brand!: string;
+  }
+
+  @Entity()
+  class Car7453 extends Vehicle7453 {
+    @Property()
+    doors!: number;
+
+    @ManyToOne(() => Tag7453, { ref: true, nullable: true })
+    tag?: Ref<Tag7453>;
+  }
+
+  test('parent-type entities are skipped in populateTPTChildRelations', async () => {
+    const orm = await MikroORM.init({
+      metadataProvider: ReflectMetadataProvider,
+      dbName: ':memory:',
+      entities: [Vehicle7453, Car7453, Tag7453],
+    });
+    await orm.schema.create();
+
+    const tag = orm.em.create(Tag7453, { label: 'sedan' });
+    // One plain parent entity (Vehicle) and one child entity (Car)
+    orm.em.create(Vehicle7453, { brand: 'Generic' });
+    orm.em.create(Car7453, { brand: 'Toyota', doors: 4, tag });
+    await orm.em.flush();
+    orm.em.clear();
+
+    const results = await orm.em.find(Vehicle7453, {}, { populate: ['*'] });
+    expect(results).toHaveLength(2);
+
+    const vehicle = results.find(r => !(r instanceof Car7453))!;
+    const car = results.find(r => r instanceof Car7453)! as Car7453;
+
+    expect(vehicle.brand).toBe('Generic');
+    expect(car.brand).toBe('Toyota');
+    expect(car.tag!.unwrap().label).toBe('sedan');
+
+    await orm.close();
+  });
+});
+// GH #7455
+describe('TPT recomputeSingleChangeSet regression', () => {
+  test('recomputeSingleChangeSet works for TPT entities in onFlush', async () => {
+    const orm = await MikroORM.init({
+      metadataProvider: ReflectMetadataProvider,
+      dbName: ':memory:',
+      entities: [Integration, FooIntegration, BarIntegration, BazIntegration],
+    });
+    await orm.schema.create();
+
+    class Subscriber implements EventSubscriber {
+      async onFlush(args: FlushEventArgs): Promise<void> {
+        const changeSets = args.uow.getChangeSets();
+        const cs = changeSets.find(cs => cs.type === ChangeSetType.CREATE && cs.entity instanceof FooIntegration);
+
+        if (cs) {
+          (cs.entity as FooIntegration).fooData = 'modified-in-hook';
+          args.uow.recomputeSingleChangeSet(cs.entity);
+        }
+      }
+    }
+
+    const em = orm.em.fork();
+    em.getEventManager().registerSubscriber(new Subscriber());
+
+    em.create(FooIntegration, {
+      name: 'Foo Integration',
+      fooData: 'original',
+    });
+
+    // Should not throw "table foo_integration has no column named name"
+    await em.flush();
+
+    em.clear();
+    const loaded = await em.findOneOrFail(FooIntegration, { name: 'Foo Integration' });
+    expect(loaded.fooData).toBe('modified-in-hook');
+    expect(loaded.name).toBe('Foo Integration');
+
+    await orm.close();
+  });
+
+  test('recomputeSingleChangeSet works for TPT UPDATE in onFlush', async () => {
+    const orm = await MikroORM.init({
+      metadataProvider: ReflectMetadataProvider,
+      dbName: ':memory:',
+      entities: [Integration, FooIntegration, BarIntegration, BazIntegration],
+    });
+    await orm.schema.create();
+
+    orm.em.create(FooIntegration, {
+      name: 'Foo Integration',
+      fooData: 'original',
+    });
+    await orm.em.flush();
+
+    class Subscriber implements EventSubscriber {
+      async onFlush(args: FlushEventArgs): Promise<void> {
+        const changeSets = args.uow.getChangeSets();
+        const cs = changeSets.find(cs => cs.type === ChangeSetType.UPDATE && cs.entity instanceof FooIntegration);
+
+        if (cs) {
+          (cs.entity as FooIntegration).name = 'Updated In Hook';
+          args.uow.recomputeSingleChangeSet(cs.entity);
+        }
+      }
+    }
+
+    orm.em.getEventManager().registerSubscriber(new Subscriber());
+
+    const foo = await orm.em.findOneOrFail(FooIntegration, { name: 'Foo Integration' });
+    foo.fooData = 'updated';
+    await orm.em.flush();
+
+    orm.em.clear();
+    const loaded = await orm.em.findOneOrFail(FooIntegration, { fooData: 'updated' });
+    expect(loaded.name).toBe('Updated In Hook');
+    expect(loaded.fooData).toBe('updated');
+
+    await orm.close();
+  });
+
+  test('recomputeSingleChangeSet updates both leaf and parent properties in onFlush', async () => {
+    const orm = await MikroORM.init({
+      metadataProvider: ReflectMetadataProvider,
+      dbName: ':memory:',
+      entities: [Integration, FooIntegration, BarIntegration, BazIntegration],
+    });
+    await orm.schema.create();
+
+    class Subscriber implements EventSubscriber {
+      async onFlush(args: FlushEventArgs): Promise<void> {
+        const changeSets = args.uow.getChangeSets();
+        const cs = changeSets.find(cs => cs.type === ChangeSetType.CREATE && cs.entity instanceof FooIntegration);
+
+        if (cs) {
+          // Modify both leaf and parent properties
+          (cs.entity as FooIntegration).fooData = 'modified-data';
+          (cs.entity as FooIntegration).name = 'Modified Name';
+          args.uow.recomputeSingleChangeSet(cs.entity);
+        }
+      }
+    }
+
+    const em = orm.em.fork();
+    em.getEventManager().registerSubscriber(new Subscriber());
+
+    em.create(FooIntegration, {
+      name: 'Original',
+      fooData: 'original',
+    });
+
+    await em.flush();
+
+    em.clear();
+    const loaded = await em.findOneOrFail(FooIntegration, { name: 'Modified Name' });
+    expect(loaded.fooData).toBe('modified-data');
+    expect(loaded.name).toBe('Modified Name');
+
+    await orm.close();
+  });
+
+  test('recomputeSingleChangeSet works for multi-level TPT entity in onFlush', async () => {
+    const orm = await MikroORM.init({
+      metadataProvider: ReflectMetadataProvider,
+      dbName: ':memory:',
+      entities: [Integration, FooIntegration, BarIntegration, BazIntegration],
+    });
+    await orm.schema.create();
+
+    class Subscriber implements EventSubscriber {
+      async onFlush(args: FlushEventArgs): Promise<void> {
+        const changeSets = args.uow.getChangeSets();
+        const cs = changeSets.find(cs => cs.type === ChangeSetType.CREATE && cs.entity instanceof BazIntegration);
+
+        if (cs) {
+          (cs.entity as BazIntegration).bazData = 'modified-baz';
+          (cs.entity as BazIntegration).barData = 'modified-bar';
+          (cs.entity as BazIntegration).name = 'Modified Name';
+          args.uow.recomputeSingleChangeSet(cs.entity);
+        }
+      }
+    }
+
+    const em = orm.em.fork();
+    em.getEventManager().registerSubscriber(new Subscriber());
+
+    em.create(BazIntegration, {
+      name: 'Baz',
+      barData: 'bar',
+      bazData: 'baz',
+    });
+
+    await em.flush();
+
+    em.clear();
+    const loaded = await em.findOneOrFail(BazIntegration, { name: 'Modified Name' });
+    expect(loaded.bazData).toBe('modified-baz');
+    expect(loaded.barData).toBe('modified-bar');
+    expect(loaded.name).toBe('Modified Name');
+
+    await orm.close();
+  });
+
+  test('recomputeSingleChangeSet creates tptChangeSets when entity added via computeChangeSet', async () => {
+    const orm = await MikroORM.init({
+      metadataProvider: ReflectMetadataProvider,
+      dbName: ':memory:',
+      entities: [Integration, FooIntegration, BarIntegration, BazIntegration],
+    });
+    await orm.schema.create();
+
+    // Add a NEW TPT entity in onFlush via computeChangeSet, then modify and recompute.
+    class Subscriber implements EventSubscriber {
+      async onFlush(args: FlushEventArgs): Promise<void> {
+        const changeSets = args.uow.getChangeSets();
+        const trigger = changeSets.find(
+          cs =>
+            cs.type === ChangeSetType.CREATE &&
+            cs.entity instanceof BarIntegration &&
+            !(cs.entity instanceof BazIntegration),
+        );
+
+        if (trigger) {
+          const foo = args.em.create(FooIntegration, {
+            name: 'Dynamic Foo',
+            fooData: 'original',
+          });
+          args.uow.computeChangeSet(foo);
+          foo.fooData = 'recomputed';
+          args.uow.recomputeSingleChangeSet(foo);
+        }
+      }
+    }
+
+    const em = orm.em.fork();
+    em.getEventManager().registerSubscriber(new Subscriber());
+
+    em.create(BarIntegration, {
+      name: 'Trigger',
+      barData: 'trigger',
+    });
+
+    await em.flush();
+
+    em.clear();
+    const loaded = await em.findOneOrFail(FooIntegration, { name: 'Dynamic Foo' });
+    expect(loaded.fooData).toBe('recomputed');
+    expect(loaded.name).toBe('Dynamic Foo');
+
+    await orm.close();
+  });
+
+  test('recomputeSingleChangeSet creates tptChangeSets for multi-level TPT via computeChangeSet', async () => {
+    const orm = await MikroORM.init({
+      metadataProvider: ReflectMetadataProvider,
+      dbName: ':memory:',
+      entities: [Integration, FooIntegration, BarIntegration, BazIntegration],
+    });
+    await orm.schema.create();
+
+    class Subscriber implements EventSubscriber {
+      async onFlush(args: FlushEventArgs): Promise<void> {
+        const changeSets = args.uow.getChangeSets();
+        const trigger = changeSets.find(cs => cs.type === ChangeSetType.CREATE && cs.entity instanceof FooIntegration);
+
+        if (trigger) {
+          const baz = args.em.create(BazIntegration, {
+            name: 'Dynamic Baz',
+            barData: 'bar',
+            bazData: 'original',
+          });
+          args.uow.computeChangeSet(baz);
+          baz.bazData = 'recomputed';
+          baz.name = 'Recomputed Baz';
+          args.uow.recomputeSingleChangeSet(baz);
+        }
+      }
+    }
+
+    const em = orm.em.fork();
+    em.getEventManager().registerSubscriber(new Subscriber());
+
+    em.create(FooIntegration, {
+      name: 'Trigger',
+      fooData: 'trigger',
+    });
+
+    await em.flush();
+
+    em.clear();
+    const loaded = await em.findOneOrFail(BazIntegration, { name: 'Recomputed Baz' });
+    expect(loaded.bazData).toBe('recomputed');
+    expect(loaded.barData).toBe('bar');
+    expect(loaded.name).toBe('Recomputed Baz');
+
+    await orm.close();
+  });
+
+  // GH #7471 - TPT parent with 1:m relation causes "prop.fieldNames is not iterable"
+  test('find on TPT leaf when parent has OneToMany relation', async () => {
+    @Entity({ inheritance: 'tpt' })
+    abstract class Person7471 {
+      @PrimaryKey()
+      id!: number;
+
+      @Property()
+      name!: string;
+
+      @OneToMany(() => Asset7471, a => a.owner)
+      assets = new Collection<Asset7471>(this);
+    }
+
+    @Entity()
+    class Employee7471 extends Person7471 {
+      @Property()
+      department!: string;
+    }
+
+    @Entity()
+    class Asset7471 {
+      @PrimaryKey()
+      id!: number;
+
+      @Property()
+      label!: string;
+
+      @ManyToOne(() => Person7471, { ref: true })
+      owner!: Ref<Person7471>;
+    }
+
+    const orm = await MikroORM.init({
+      metadataProvider: ReflectMetadataProvider,
+      dbName: ':memory:',
+      entities: [Person7471, Employee7471, Asset7471],
+    });
+    await orm.schema.create();
+
+    const emp = orm.em.create(Employee7471, { name: 'John', department: 'IT' });
+    orm.em.create(Asset7471, { label: 'Laptop', owner: emp });
+    await orm.em.flush();
+    orm.em.clear();
+
+    const employees = await orm.em.findAll(Employee7471);
+    expect(employees).toHaveLength(1);
+    expect(employees[0].name).toBe('John');
+    expect(employees[0].department).toBe('IT');
+
+    await orm.close();
+  });
+});
+
+describe('GH #7469 - populate 1:1 on TPT leaf entity with reverse declared', () => {
+  test('owning side of 1:1 on TPT leaf populates when reverse is declared', async () => {
+    @Entity({ inheritance: 'tpt' })
+    abstract class Person7469 {
+      @PrimaryKey()
+      id!: number;
+
+      @Property()
+      name!: string;
+    }
+
+    @Entity()
+    class Employee7469 extends Person7469 {
+      @Property()
+      department!: string;
+
+      @OneToOne(() => OfficeSpace7469, { owner: true, nullable: true, ref: true })
+      officeSpace?: Ref<OfficeSpace7469>;
+    }
+
+    @Entity()
+    class OfficeSpace7469 {
+      @PrimaryKey()
+      id!: number;
+
+      @Property()
+      location!: string;
+
+      @OneToOne(() => Employee7469, e => e.officeSpace)
+      employee?: Employee7469;
+    }
+
+    const orm = await MikroORM.init({
+      metadataProvider: ReflectMetadataProvider,
+      dbName: ':memory:',
+      entities: [OfficeSpace7469, Person7469, Employee7469],
+    });
+
+    await orm.schema.create();
+
+    const officeSpace = orm.em.create(OfficeSpace7469, { location: 'Building A' });
+    const employee = orm.em.create(Employee7469, { name: 'Alice', department: 'Engineering', officeSpace });
+    await orm.em.flush();
+    orm.em.clear();
+
+    // Loading employee with populate of the owning 1:1 should work (joined strategy)
+    const loadedEmployee = await orm.em.findOneOrFail(Employee7469, employee.id, {
+      populate: ['officeSpace'],
+      strategy: 'joined',
+    });
+    expect(loadedEmployee.name).toBe('Alice');
+    expect(loadedEmployee.department).toBe('Engineering');
+    expect(loadedEmployee.officeSpace?.unwrap().location).toBe('Building A');
+
+    orm.em.clear();
+
+    // Loading office space with populate of the reverse 1:1 should also work (joined strategy)
+    const loadedOffice = await orm.em.findOneOrFail(OfficeSpace7469, officeSpace.id, {
+      populate: ['employee'],
+      strategy: 'joined',
+    });
+    expect(loadedOffice.location).toBe('Building A');
+    expect(loadedOffice.employee?.name).toBe('Alice');
+    expect(loadedOffice.employee?.department).toBe('Engineering');
 
     await orm.close();
   });

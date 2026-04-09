@@ -10,6 +10,7 @@ import type {
   FilterQuery,
   IHydrator,
   IPrimaryKey,
+  IPrimaryKeyValue,
 } from '../typings.js';
 import { EntityIdentifier } from '../entity/EntityIdentifier.js';
 import { PolymorphicRef } from '../entity/PolymorphicRef.js';
@@ -162,6 +163,10 @@ export class ChangeSetPersister {
         !prop.generated &&
         !prop.embedded &&
         ![ReferenceKind.ONE_TO_MANY, ReferenceKind.MANY_TO_MANY].includes(prop.kind) &&
+        !(
+          prop.kind === ReferenceKind.EMBEDDED &&
+          prop.targetMeta?.props.every(p => p.formula || p.persist === false || p.primary)
+        ) &&
         prop.name !== wrapped.__meta.root.discriminatorColumn &&
         prop.type !== 'ObjectId' &&
         prop.persist !== false &&
@@ -204,6 +209,7 @@ export class ChangeSetPersister {
     }
 
     this.mapReturnedValues(changeSet.entity, changeSet.payload, res.row, meta);
+    this.syncCompositeIdentifiers(changeSet);
     this.markAsPopulated(changeSet, meta);
     wrapped.__initialized = true;
     wrapped.__managed = true;
@@ -282,6 +288,7 @@ export class ChangeSetPersister {
       if (res.rows) {
         this.mapReturnedValues(changeSet.entity, changeSet.payload, res.rows[i], meta);
       }
+      this.syncCompositeIdentifiers(changeSet);
       this.markAsPopulated(changeSet, meta);
       wrapped.__initialized = true;
       wrapped.__managed = true;
@@ -390,6 +397,29 @@ export class ChangeSetPersister {
 
     if (wrapped.__identifier && !Array.isArray(wrapped.__identifier)) {
       wrapped.__identifier.setValue(value);
+    }
+  }
+
+  /**
+   * After INSERT + hydration, sync all EntityIdentifier placeholders in composite PK arrays
+   * with the real values now present on the entity. This is needed because `mapPrimaryKey`
+   * only handles the first PK column, but any scalar PK in a composite key may be auto-generated.
+   */
+  private syncCompositeIdentifiers<T extends object>(changeSet: ChangeSet<T>): void {
+    const wrapped = helper(changeSet.entity);
+
+    if (!Array.isArray(wrapped.__identifier)) {
+      return;
+    }
+
+    const pks = changeSet.meta.getPrimaryProps();
+
+    for (let i = 0; i < pks.length; i++) {
+      const ident = wrapped.__identifier[i];
+
+      if (ident instanceof EntityIdentifier && pks[i].kind === ReferenceKind.SCALAR) {
+        ident.setValue(changeSet.entity[pks[i].name] as IPrimaryKeyValue);
+      }
     }
   }
 
@@ -614,8 +644,8 @@ export class ChangeSetPersister {
       return;
     }
 
-    if (Array.isArray(value) && value.every(item => item instanceof EntityIdentifier)) {
-      changeSet.payload[prop.name] = value.map(item => item.getValue());
+    if (Array.isArray(value) && value.some(item => item instanceof EntityIdentifier)) {
+      changeSet.payload[prop.name] = value.map(item => (item instanceof EntityIdentifier ? item.getValue() : item));
       return;
     }
 
